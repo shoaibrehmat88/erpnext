@@ -84,8 +84,17 @@ frappe.ui.form.on("Delivery Note", {
 	print_without_amount: function(frm) {
 		erpnext.stock.delivery_note.set_print_hide(frm.doc);
 	},
-
+	custom_picking_bin: function(frm){
+		frappe.db.set_value('Picking Bin',frm.doc.custom_picking_bin,'occupied',1);
+	},
 	refresh: function(frm) {
+		frm.set_query('custom_picking_bin', function() {
+			return {
+				filters: {
+					'occupied': 0
+				}
+			}
+		});
 		if (frm.doc.docstatus === 1 && frm.doc.is_return === 1 && frm.doc.per_billed !== 100) {
 			frm.add_custom_button(__('Credit Note'), function() {
 				frappe.model.open_mapped_doc({

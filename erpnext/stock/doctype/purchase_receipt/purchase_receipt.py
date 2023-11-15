@@ -1105,7 +1105,7 @@ def update_purchase_receipt_status(docname, status):
 @frappe.whitelist()
 def make_stock_entry(source_name, target_doc=None):
 	def set_missing_values(source, target):
-		target.stock_entry_type = "Material Transfer"
+		target.stock_entry_type = "Put Away"
 		target.purpose = "Material Transfer"
 		target.set_missing_values()
 
@@ -1128,7 +1128,9 @@ def make_stock_entry(source_name, target_doc=None):
 		target_doc,
 		set_missing_values,
 	)
-
+	#postex
+	for d in doclist.items:
+		d.t_warehouse = frappe.db.get_value('Item Default',{'parent': d.item_code},"default_warehouse")
 	return doclist
 
 

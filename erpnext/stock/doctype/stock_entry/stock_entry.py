@@ -224,6 +224,15 @@ class StockEntry(StockController):
 			self.set_material_request_transfer_status("In Transit")
 		if self.purpose == "Material Transfer" and self.outgoing_stock_entry:
 			self.set_material_request_transfer_status("Completed")
+		
+		#postex
+		for i in self.items:
+			doc = frappe.new_doc("Item Default")
+			doc.parent = i.item_code
+			doc.default_warehouse = i.t_warehouse
+			doc.parenttype = 'Item'
+			doc.parentfield = 'item_defaults'
+			doc.save()
 
 	def on_cancel(self):
 		self.update_subcontract_order_supplied_items()

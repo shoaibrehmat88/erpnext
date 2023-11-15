@@ -57,6 +57,15 @@ frappe.ui.form.on("Purchase Order", {
 				}
 			});
 		}
+		frm.set_query('set_warehouse', function(doc) {
+			return {
+				filters: {
+					"name": ["like","Sellable%"],
+					"company": doc.company
+				}
+			};
+		});
+
 	},
 
 	get_materials_from_supplier: function(frm) {

@@ -6,6 +6,12 @@
 frappe.provide("erpnext.stock");
 
 frappe.ui.form.on("Purchase Receipt", {
+	on_submit: (frm) => {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.purchase_receipt.purchase_receipt.make_stock_entry",
+			frm: cur_frm,
+		})
+	},
 	setup: (frm) => {
 		frm.make_methods = {
 			'Landed Cost Voucher': () => {
@@ -55,6 +61,15 @@ frappe.ui.form.on("Purchase Receipt", {
 	},
 
 	refresh: function(frm) {
+		frm.set_query('set_warehouse', function(doc) {
+			return {
+				filters: {
+					"name": ["like","Sellable%"],
+					"company": doc.company
+				}
+			};
+		});
+
 		if(frm.doc.company) {
 			frm.trigger("toggle_display_account_head");
 		}

@@ -258,7 +258,10 @@ class SalesOrder(SellingController):
 			from erpnext.accounts.doctype.pricing_rule.utils import update_coupon_code_count
 
 			update_coupon_code_count(self.coupon_code, "used")
-
+		
+		#postex
+		dn = make_delivery_note(self.name)
+		dn.save()
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
 		super(SalesOrder, self).on_cancel()
@@ -687,7 +690,7 @@ def make_delivery_note(source_name, target_doc=None, skip_item_mapping=False):
 			)
 
 	mapper = {
-		"Sales Order": {"doctype": "Delivery Note", "validation": {"docstatus": ["=", 1]}},
+		"Sales Order": {"doctype": "Delivery Note", "validation": {"docstatus": ["=", 1]},"field_map":{"custom_airway_bill":"custom_airway_bill"}},
 		"Sales Taxes and Charges": {"doctype": "Sales Taxes and Charges", "add_if_empty": True},
 		"Sales Team": {"doctype": "Sales Team", "add_if_empty": True},
 	}

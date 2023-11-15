@@ -257,6 +257,9 @@ class DeliveryNote(SellingController):
 		self.make_gl_entries()
 		self.repost_future_sle_and_gle()
 
+		#postex
+		frappe.db.set_value('Picking Bin',self.custom_picking_bin,'occupied',0)
+
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()
 
