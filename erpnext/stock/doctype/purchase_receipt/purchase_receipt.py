@@ -271,6 +271,10 @@ class PurchaseReceipt(BuyingController):
 		self.repost_future_sle_and_gle()
 		self.set_consumed_qty_in_subcontract_order()
 
+		#postex
+		se = make_stock_entry(self.name)
+		se.save()
+
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql(
 			"""select t1.name

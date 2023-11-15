@@ -537,7 +537,7 @@ def make_purchase_receipt(source_name, target_doc=None):
 	)
 
 	doc.set_onload("ignore_price_list", True)
-
+	doc.set_warehouse = ''
 	return doc
 
 

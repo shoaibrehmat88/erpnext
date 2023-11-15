@@ -62,7 +62,7 @@ frappe.ui.form.on('Delivery Trip', {
 						company: frm.doc.company,
 					}
 				})
-			}, __("Get stops from"));
+			}, __("Fetch Orders"));
 		}
 		frm.add_custom_button(__("Delivery Notes"), function () {
 			frappe.set_route("List", "Delivery Note",

@@ -7,7 +7,6 @@ frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on("Purchase Order", {
 	setup: function(frm) {
-
 		if (frm.doc.is_old_subcontracting_flow) {
 			frm.set_query("reserve_warehouse", "supplied_items", function() {
 				return {
@@ -60,7 +59,7 @@ frappe.ui.form.on("Purchase Order", {
 		frm.set_query('set_warehouse', function(doc) {
 			return {
 				filters: {
-					"name": ["like","Sellable%"],
+					"warehouse_type": "OMS",
 					"company": doc.company
 				}
 			};

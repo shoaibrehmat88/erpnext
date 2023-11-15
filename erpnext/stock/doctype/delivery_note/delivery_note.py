@@ -677,12 +677,13 @@ def make_sales_invoice(source_name, target_doc=None):
 def make_delivery_trip(source_name, target_doc=None):
 	def update_stop_details(source_doc, target_doc, source_parent):
 		target_doc.customer = source_parent.customer
-		target_doc.address = source_parent.shipping_address_name
+		target_doc.address = 'Online Customer-Shipping'
 		target_doc.customer_address = source_parent.shipping_address
 		target_doc.contact = source_parent.contact_person
 		target_doc.customer_contact = source_parent.contact_display
 		target_doc.grand_total = source_parent.grand_total
-
+		target_doc.custom_cn = source_parent.custom_cn
+		target_doc.custom_consignee = source_parent.custom_consignee_name
 		# Append unique Delivery Notes in Delivery Trip
 		delivery_notes.append(target_doc.delivery_note)
 
