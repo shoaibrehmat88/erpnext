@@ -9,7 +9,7 @@ frappe.listview_settings['Purchase Receipt'] = {
 		} else if (flt(doc.per_returned, 2) === 100) {
 			return [__("Return Issued"), "grey", "per_returned,=,100"];
 		} else if (flt(doc.grand_total) !== 0 && flt(doc.per_billed, 2) < 100) {
-			return [__("To Bill"), "orange", "per_billed,<,100"];
+			return [__("Submitted"), "green", "per_billed,<,100"];
 		} else if (flt(doc.grand_total) === 0 || flt(doc.per_billed, 2) === 100) {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
