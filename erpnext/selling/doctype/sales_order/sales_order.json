@@ -207,20 +207,16 @@
    "set_only_once": 1
   },
   {
-   "bold": 1,
    "fieldname": "customer",
    "fieldtype": "Link",
    "hide_days": 1,
    "hide_seconds": 1,
-   "in_global_search": 1,
-   "in_standard_filter": 1,
    "label": "Customer",
    "oldfieldname": "customer",
    "oldfieldtype": "Link",
    "options": "Customer",
    "print_hide": 1,
-   "reqd": 1,
-   "search_index": 1
+   "reqd": 1
   },
   {
    "bold": 1,
@@ -1627,11 +1623,12 @@
    "label": "Named Place"
   }
  ],
+ "hide_toolbar": 1,
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-18 12:41:54.813462",
+ "modified": "2023-11-16 22:26:49.272638",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
@@ -1639,66 +1636,34 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "amend": 1,
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales User",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
    "export": 1,
-   "import": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
-   "set_user_permissions": 1,
+   "role": "Administrator",
    "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Maintenance User",
-   "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
-   "role": "Accounts User"
+   "report": 1,
+   "role": "Warehouse Manager",
+   "share": 1
   },
   {
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Stock User"
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Sales Manager",
-   "write": 1
+   "role": "Inbound Incharge",
+   "share": 1
   }
  ],
  "search_fields": "status,transaction_date,customer,customer_name, territory,order_type,company",
@@ -1706,7 +1671,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "timeline_field": "customer",
  "title_field": "customer_name",
  "track_changes": 1,
  "track_seen": 1

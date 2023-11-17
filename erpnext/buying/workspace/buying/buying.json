@@ -5,7 +5,7 @@
    "label": "Purchase Order Trends"
   }
  ],
- "content": "[{\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"Buying\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trends\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports & Masters</b></span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Regional\",\"col\":4}}]",
+ "content": "[{\"id\":\"vdlMR0Mm8y\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"Buying\",\"col\":12}},{\"id\":\"3Vc35-Yo1L\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trends\",\"col\":12}},{\"id\":\"cLiti1mc95\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"t2ChlnJYsz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"id\":\"YWDBeDgupm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"lUWAZXffD2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"VZPGlV_CWw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"PBvV4Oafab\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"id\":\"Ms-k0pqzuj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"id\":\"q6AHGv5dxO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"-cB_d8rlVC\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Dl6F_kLHlX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"2kP3aqL2Fa\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"HDxSD87YCI\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"spyBm-9I9Y\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"JQTZycWDwz\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"0itdnTABfo\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"6lc4aOnCuU\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"IhcB7AEnB2\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}},{\"id\":\"Bm3LcpM8CP\",\"type\":\"card\",\"data\":{\"card_name\":\"Regional\",\"col\":4}}]",
  "creation": "2020-01-28 11:50:26.195467",
  "custom_blocks": [],
  "docstatus": 0,
@@ -14,7 +14,7 @@
  "hide_custom": 0,
  "icon": "buying",
  "idx": 0,
- "is_hidden": 0,
+ "is_hidden": 1,
  "label": "Buying",
  "links": [
   {
@@ -511,7 +511,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-05-24 14:47:20.535772",
+ "modified": "2023-11-17 04:31:51.732110",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
@@ -522,7 +522,7 @@
  "quick_lists": [],
  "restrict_to_domain": "",
  "roles": [],
- "sequence_id": 5.0,
+ "sequence_id": 4.0,
  "shortcuts": [
   {
    "color": "Green",

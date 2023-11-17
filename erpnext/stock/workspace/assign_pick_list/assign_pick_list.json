@@ -1,0 +1,54 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"6O-BBuK_fv\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h1\\\">Assign Pick List &amp; Monitor Progress</span>\",\"col\":12}},{\"id\":\"nSZo_xL8Gt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QkIAZb57ES\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udd34 Pending To Assign\",\"col\":4}},{\"id\":\"pU1UIZ9LpX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udfe0 Assigned Pick List\",\"col\":4}},{\"id\":\"7icLhkZtyq\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udfe1 Packing In Process\",\"col\":4}}]",
+ "creation": "2023-11-17 04:14:53.534183",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "assign",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Assign Pick List",
+ "links": [],
+ "modified": "2023-11-17 05:41:28.078238",
+ "modified_by": "Administrator",
+ "module": "Stock",
+ "name": "Assign Pick List",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "OUTBOUND",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Delivery Note",
+   "label": "\ud83d\udd34 Pending To Assign",
+   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"not like\",\"%picker@gmail.com%\",false]]"
+  },
+  {
+   "document_type": "Delivery Note",
+   "label": "\ud83d\udfe0 Assigned Pick List",
+   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"like\",\"%picker@gmail.com%\",false]]"
+  },
+  {
+   "document_type": "Delivery Note",
+   "label": "\ud83d\udfe1 Packing In Process",
+   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pack\",false]]"
+  }
+ ],
+ "roles": [
+  {
+   "role": "Warehouse Manager"
+  },
+  {
+   "role": "Inbound Incharge"
+  },
+  {
+   "role": "Administrator"
+  }
+ ],
+ "sequence_id": 35.0,
+ "shortcuts": [],
+ "title": "Assign Pick List"
+}

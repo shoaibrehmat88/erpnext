@@ -1400,7 +1400,7 @@
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-04 14:15:28.363184",
+ "modified": "2023-11-17 02:58:37.659868",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
@@ -1408,56 +1408,60 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Stock User",
+   "role": "Administrator",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Stock Manager",
+   "role": "Warehouse Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User",
+   "role": "Inbound Incharge",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts User"
+   "role": "Picker",
+   "share": 1,
+   "write": 1
   },
   {
-   "permlevel": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
-   "role": "Stock Manager",
+   "report": 1,
+   "role": "Packer",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
@@ -1465,7 +1469,20 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
+ "states": [
+  {
+   "color": "Red",
+   "title": "To Pick"
+  },
+  {
+   "color": "Orange",
+   "title": "To Pack"
+  },
+  {
+   "color": "Green",
+   "title": "Packed"
+  }
+ ],
  "timeline_field": "customer",
  "title_field": "title",
  "track_changes": 1,

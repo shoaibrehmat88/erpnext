@@ -2,6 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Delivery Trip', {
+	onload: function(frm) {
+        frm.set_df_property('departure_time', 'hidden', 1); // Hide the field
+        frm.toggle_reqd('departure_time', false); // Make the field mandatory
+		frm.fields_dict['departure_time'].df.default = frappe.datetime.get_today();
+    },
 	setup: function (frm) {
 		frm.set_indicator_formatter('customer', (stop) => (stop.visited) ? "green" : "orange");
 
@@ -55,11 +60,15 @@ frappe.ui.form.on('Delivery Trip', {
 					target: frm,
 					date_field: "posting_date",
 					setters: {
-						company: frm.doc.company,
+					//	company: frm.doc.company,
+					custom_store_order_ref_id:'',
+					sales_partner:'',
+				
 					},
 					get_query_filters: {
 						docstatus: 1,
-						company: frm.doc.company,
+						//company: frm.doc.company,
+						//sales_partner:'Aramex'
 					}
 				})
 			}, __("Fetch Orders"));
