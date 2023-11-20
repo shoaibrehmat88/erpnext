@@ -23,6 +23,7 @@
   "is_return",
   "issue_credit_note",
   "return_against",
+  "returned_warehouse",
   "accounting_dimensions_section",
   "cost_center",
   "column_break_18",
@@ -1394,13 +1395,21 @@
    "fieldname": "named_place",
    "fieldtype": "Data",
    "label": "Named Place"
+  },
+  {
+   "depends_on": "eval:doc.is_return == 1",
+   "fieldname": "returned_warehouse",
+   "fieldtype": "Link",
+   "label": "Returned Warehouse",
+   "mandatory_depends_on": "eval:doc.is_return == 1",
+   "options": "Warehouse"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-17 02:58:37.659868",
+ "modified": "2023-11-17 16:01:06.666316",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",

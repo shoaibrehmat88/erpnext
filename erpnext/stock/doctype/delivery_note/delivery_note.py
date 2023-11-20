@@ -870,101 +870,38 @@ def make_shipment(source_name, target_doc=None):
 
 def make_stock_return_doc(doctype: str, source_name: str, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
-
-	from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
-
+	source = frappe.get_doc('Delivery Note',source_name)
 	company = frappe.db.get_value("Delivery Note", source_name, "company")
-	default_warehouse_for_sales_return = frappe.get_cached_value(
-		"Company", company, "default_warehouse_for_sales_return"
-	)
-
-	def set_missing_values(source, target):
-		doc = frappe.get_doc(target)
-		doc.is_return = 1
-		doc.return_against = source.name
-		doc.set_warehouse = ""
-		if doctype == "Sales Invoice" or doctype == "POS Invoice":
-			doc.is_pos = source.is_pos
-
-			# look for Print Heading "Credit Note"
-			if not doc.select_print_heading:
-				doc.select_print_heading = frappe.get_cached_value("Print Heading", _("Credit Note"))
-
-		elif doctype == "Purchase Invoice":
-			# look for Print Heading "Debit Note"
-			doc.select_print_heading = frappe.get_cached_value("Print Heading", _("Debit Note"))
-			if source.tax_withholding_category:
-				doc.set_onload("supplier_tds", source.tax_withholding_category)
-
-		for tax in doc.get("taxes") or []:
-			if tax.charge_type == "Actual":
-				tax.tax_amount = -1 * tax.tax_amount
-
-		if doc.get("is_return"):
-			if doc.doctype == "Sales Invoice" or doc.doctype == "POS Invoice":
-				doc.consolidated_invoice = ""
-				doc.set("payments", [])
-				for data in source.payments:
-					paid_amount = 0.00
-					base_paid_amount = 0.00
-					data.base_amount = flt(
-						data.amount * source.conversion_rate, source.precision("base_paid_amount")
-					)
-					paid_amount += data.amount
-					base_paid_amount += data.base_amount
-					doc.append(
-						"payments",
-						{
-							"mode_of_payment": data.mode_of_payment,
-							"type": data.type,
-							"amount": -1 * paid_amount,
-							"base_amount": -1 * base_paid_amount,
-							"account": data.account,
-							"default": data.default,
-						},
-					)
-				if doc.is_pos:
-					doc.paid_amount = -1 * source.paid_amount
-			elif doc.doctype == "Purchase Invoice":
-				doc.paid_amount = -1 * source.paid_amount
-				doc.base_paid_amount = -1 * source.base_paid_amount
-				doc.payment_terms_template = ""
-				doc.payment_schedule = []
-
-		if doc.get("is_return") and hasattr(doc, "packed_items"):
-			for d in doc.get("packed_items"):
-				d.qty = d.qty * -1
-
-		if doc.get("discount_amount"):
-			doc.discount_amount = -1 * source.discount_amount
-
-		if doctype != "Subcontracting Receipt":
-			doc.run_method("calculate_taxes_and_totals")
-
 	def update_item(source_doc, target_doc, source_parent):
 		target_doc.qty = -1 * source_doc.qty
 		target_doc.against_sales_order = source_doc.against_sales_order
 		target_doc.against_sales_invoice = source_doc.against_sales_invoice
 
-	doclist = get_mapped_doc(
-		doctype,
-		source_name,
-		{
-			doctype: {
-				"doctype": doctype,
-			},
-			doctype
-			+ " Item": {
-				"doctype": doctype + " Detail",
-				"field_map": {"warehouse": "s_warehouse", "batch_no": "batch_no", "qty": "actual_qty", "" : "t_warehouse"},
-			},
-		},
-		target_doc,
-		set_missing_values,
-	)
+	# doclist = get_mapped_doc(
+	# 	doctype,
+	# 	source_name,
+	# 	{
+	# 		"Delivery Note": {
+	# 			"doctype": doctype,
+	# 		},
+	# 		"Delivery Note Item": {
+	# 			"doctype": doctype + " Detail",
+	# 			"field_map": {"warehouse": "s_warehouse", "batch_no": "batch_no", "qty": "actual_qty", "" : "t_warehouse"},
+	# 		},
+	# 	},
+	# 	target_doc
+	# )
+	doclist = frappe.new_doc('Stock Entry')
+	doclist.stock_entry_type = 'Put Away'
+	for i in source.items:
+		doclist.append("items",{
+			"item_code" : i.item_code,
+			"s_warehouse" : i.warehouse,
+			"t_warehouse" : i.warehouse,
+			"qty" : -1 * i.qty
+		})
 	doclist.save()
 	return doclist
-
 
 @frappe.whitelist()
 def make_stock_return_entry(source_name, target_doc=None):

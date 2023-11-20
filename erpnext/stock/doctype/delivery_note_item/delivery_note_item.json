@@ -753,10 +753,9 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "returned_qty",
    "fieldname": "returned_qty",
    "fieldtype": "Float",
-   "label": "Returned Qty in Stock UOM",
+   "label": "Return Qty",
    "no_copy": 1,
    "read_only": 1
   },
@@ -869,7 +868,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-16 16:18:18.013379",
+ "modified": "2023-11-17 16:40:52.249858",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note Item",
