@@ -20,7 +20,7 @@ form_grid_templates = {"items": "templates/form_grid/item_grid.html"}
 
 class DeliveryNote(SellingController):
 	def before_save(self):
-		if self.workflow_state != 'To Pack' and self.workflow_state != 'Returned':
+		if self.workflow_state != 'To Pack' and self.workflow_state != 'To QC':
 			if self.is_return == 0:
 				self.workflow_state = 'To Pick'
 			else:
@@ -269,6 +269,9 @@ class DeliveryNote(SellingController):
 		frappe.db.set_value('Picking Bin',self.custom_picking_bin,'occupied',0)
 
 		if self.is_return == 1:
+			for i in self.delivery_note_item:
+				if i.total_quantity != (i.accepted_quantity + i.rejected_quantity + i.short_quantity):
+					frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")
 			# make_stock_return_doc('Stock Entry',self.name)
 			make_return_stock_entries(self)
 
