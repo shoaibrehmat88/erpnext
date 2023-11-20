@@ -24,7 +24,7 @@ class DeliveryNote(SellingController):
 			if self.is_return == 0:
 				self.workflow_state = 'To Pick'
 			else:
-				self.workflow_state = 'Return'
+				self.workflow_state = 'To Return'
 				self.naming_series = 'MAT-DN-RET-.YYYY.-'
 
 	def __init__(self, *args, **kwargs):
