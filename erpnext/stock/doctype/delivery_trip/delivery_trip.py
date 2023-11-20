@@ -418,3 +418,9 @@ def get_driver_email(driver):
 	employee = frappe.db.get_value("Driver", driver, "employee")
 	email = frappe.db.get_value("Employee", employee, "prefered_email")
 	return {"email": email}
+
+@frappe.whitelist()
+def barcode(barcode,delivery_partner):
+	employee = frappe.db.get_value("Driver", driver, "employee")
+	email = frappe.db.get_value("Employee", employee, "prefered_email")
+	return {"email": email}

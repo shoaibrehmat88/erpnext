@@ -22,6 +22,10 @@
   "vehicle",
   "departure_time",
   "employee",
+  "section_break_ro9xo",
+  "delivery_partner",
+  "column_break_nwz5o",
+  "scan_barcode",
   "delivery_service_stops",
   "delivery_stops",
   "calculate_arrival_time",
@@ -183,11 +187,31 @@
    "label": "Employee",
    "options": "Employee",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ro9xo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "scan_barcode",
+   "fieldtype": "Data",
+   "label": "Scan Barcode",
+   "options": "Barcode"
+  },
+  {
+   "fieldname": "delivery_partner",
+   "fieldtype": "Link",
+   "label": "Delivery Company",
+   "options": "Sales Partner"
+  },
+  {
+   "fieldname": "column_break_nwz5o",
+   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-15 20:57:44.852742",
+ "modified": "2023-11-20 17:19:08.388542",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

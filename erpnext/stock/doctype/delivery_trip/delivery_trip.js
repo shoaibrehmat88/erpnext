@@ -2,6 +2,22 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Delivery Trip', {
+	scan_barcode: function(frm){
+		if(frm.doc.delivery_partner == undefined || frm.doc.delivery_partner == ''){
+			frappe.throw('Please select the Delivery Partner first!');
+		}
+		frappe.call({
+			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.barcode",
+			args: {
+				barcode: frm.doc.barcode,
+				delivery_partner : frm.doc.delivery_partner
+			},
+			callback: (data) => {
+			}
+		});
+		frm.doc.scan_barcode = '';
+		refresh_field('scan_barcode');	
+	},
 	onload: function(frm) {
         frm.set_df_property('departure_time', 'hidden', 1); // Hide the field
         frm.toggle_reqd('departure_time', false); // Make the field mandatory

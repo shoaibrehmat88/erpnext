@@ -88,6 +88,7 @@ frappe.ui.form.on("Delivery Note", {
 		frappe.db.set_value('Picking Bin',frm.doc.custom_picking_bin,'occupied',1);
 	},
 	refresh: function(frm) {
+		frm.fields_dict['delivery_note_item'].grid.only_sortable();
 		frm.set_query('custom_picking_bin', function() {
 			return {
 				filters: {
@@ -186,9 +187,17 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends erpn
 					// }, __("Get Items From"));
 			// }
 		}
+		if (this.frm.is_new() && (this.frm.doc.return_date == undefined || this.frm.doc.return_date == '')){
+			this.frm.doc.return_date = frappe.datetime.now_datetime();
+		}
+		refresh_field('return_date');
 		this.frm.get_field("items").grid.toggle_enable("qty", (this.frm.doc.workflow_state == 'To Pick') ? 1 : 0);
 		this.frm.get_field("items").grid.toggle_enable("pack_quantity", (this.frm.doc.workflow_state == 'To Pack') ? 1 : 0);
 		refresh_field("items");
+		this.frm.get_field("delivery_note_item").grid.toggle_enable("accepted_quantity", (this.frm.doc.workflow_state == 'To QC') ? 1 : 0);
+		this.frm.get_field("delivery_note_item").grid.toggle_enable("rejected_quantity", (this.frm.doc.workflow_state == 'To QC') ? 1 : 0);
+		this.frm.get_field("delivery_note_item").grid.toggle_enable("short_quantity", (this.frm.doc.workflow_state == 'To QC') ? 1 : 0);
+		refresh_field('delivery_note_item')
 		if (!doc.is_return && doc.status!="Closed") {
 			// if(doc.docstatus == 1) {
 				// this.frm.add_custom_button(__('Shipment'), function() {
