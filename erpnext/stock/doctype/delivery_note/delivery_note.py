@@ -260,8 +260,8 @@ class DeliveryNote(SellingController):
 		#postex
 		frappe.db.set_value('Picking Bin',self.custom_picking_bin,'occupied',0)
 
-		# if self.is_return == 1:
-		# 	make_stock_return_doc('Stock Entry',self.name)
+		if self.is_return == 1:
+			make_stock_return_doc('Stock Entry',self.name)
 
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()
@@ -877,22 +877,9 @@ def make_stock_return_doc(doctype: str, source_name: str, target_doc=None):
 		target_doc.against_sales_order = source_doc.against_sales_order
 		target_doc.against_sales_invoice = source_doc.against_sales_invoice
 
-	# doclist = get_mapped_doc(
-	# 	doctype,
-	# 	source_name,
-	# 	{
-	# 		"Delivery Note": {
-	# 			"doctype": doctype,
-	# 		},
-	# 		"Delivery Note Item": {
-	# 			"doctype": doctype + " Detail",
-	# 			"field_map": {"warehouse": "s_warehouse", "batch_no": "batch_no", "qty": "actual_qty", "" : "t_warehouse"},
-	# 		},
-	# 	},
-	# 	target_doc
-	# )
 	doclist = frappe.new_doc('Stock Entry')
 	doclist.stock_entry_type = 'Put Away'
+	doclist.company = company
 	for i in source.items:
 		doclist.append("items",{
 			"item_code" : i.item_code,
