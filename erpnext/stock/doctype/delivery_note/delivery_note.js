@@ -10,17 +10,6 @@ frappe.provide("erpnext.stock.delivery_note");
 frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on("Delivery Note", {
-	on_submit: function(frm){
-		// debugger
-		// if (frm.doc.is_return == 1 && frm.doc.docstatus == 1){
-		// 	let me = frm;
-		// 	frappe.model.open_mapped_doc({
-		// 		method: "erpnext.stock.doctype.delivery_note.delivery_note.make_stock_return_entry",
-		// 		frm: me
-		// 	})
-
-		// }
-	},
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Packing Slip': 'Packing Slip',
@@ -197,7 +186,9 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends erpn
 					// }, __("Get Items From"));
 			// }
 		}
-
+		this.frm.get_field("items").grid.toggle_enable("qty", (this.frm.doc.workflow_state == 'To Pick') ? 1 : 0);
+		this.frm.get_field("items").grid.toggle_enable("pack_quantity", (this.frm.doc.workflow_state == 'To Pack') ? 1 : 0);
+		refresh_field("items");
 		if (!doc.is_return && doc.status!="Closed") {
 			// if(doc.docstatus == 1) {
 				// this.frm.add_custom_button(__('Shipment'), function() {

@@ -19,6 +19,14 @@ form_grid_templates = {"items": "templates/form_grid/item_grid.html"}
 
 
 class DeliveryNote(SellingController):
+	def before_save(self):
+		if self.workflow_state != 'To Pack' and self.workflow_state != 'Returned':
+			if self.is_return == 0:
+				self.workflow_state = 'To Pick'
+			else:
+				self.workflow_state = 'Return'
+				self.naming_series = 'MAT-DN-RET-.YYYY.-'
+
 	def __init__(self, *args, **kwargs):
 		super(DeliveryNote, self).__init__(*args, **kwargs)
 		self.status_updater = [
@@ -315,7 +323,11 @@ class DeliveryNote(SellingController):
 
 	def validate_packed_qty(self):
 		"""Validate that if packed qty exists, it should be equal to qty"""
-
+		#postex
+		if self.is_return == 0:
+			for i in self.items:
+				if i.qty != i.pack_quantity:
+					frappe.throw("Unable to submit order!<br/>Please review the quantities picked to ensure they match the requested quantities.")
 		if frappe.db.exists("Packing Slip", {"docstatus": 1, "delivery_note": self.name}):
 			product_bundle_list = self.get_product_bundle_list()
 			for item in self.items + self.packed_items:
@@ -1056,6 +1068,7 @@ def make_return_stock_entries(dn):
 			})
 	if len(doclist.items) > 0:
 		doclist.save()
+		doclist.submit()
 	doclist = frappe.new_doc('Stock Entry')
 	doclist.stock_entry_type = 'Put Away'
 	doclist.company = dn.company
@@ -1069,4 +1082,5 @@ def make_return_stock_entries(dn):
 			})
 	if len(doclist.items) > 0:
 		doclist.save()
+		doclist.submit()
 	
