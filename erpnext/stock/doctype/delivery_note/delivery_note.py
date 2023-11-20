@@ -261,7 +261,8 @@ class DeliveryNote(SellingController):
 		frappe.db.set_value('Picking Bin',self.custom_picking_bin,'occupied',0)
 
 		if self.is_return == 1:
-			make_stock_return_doc('Stock Entry',self.name)
+			# make_stock_return_doc('Stock Entry',self.name)
+			make_return_stock_entries(self)
 
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()
@@ -1039,3 +1040,33 @@ def make_inter_company_transaction(doctype, source_name, target_doc=None):
 
 def on_doctype_update():
 	frappe.db.add_index("Delivery Note", ["customer", "is_return", "return_against"])
+
+
+def make_return_stock_entries(dn):
+	doclist = frappe.new_doc('Stock Entry')
+	doclist.stock_entry_type = 'Put Away'
+	doclist.company = dn.company
+	for i in dn.delivery_note_item:
+		if i.accepted_quantity > 0:
+			doclist.append("items",{
+				"item_code" : i.sku,
+				"s_warehouse" : i.warehouse,
+				"t_warehouse" : dn.accepted_warehouse,
+				"qty" : i.accepted_quantity
+			})
+	if len(doclist.items) > 0:
+		doclist.save()
+	doclist = frappe.new_doc('Stock Entry')
+	doclist.stock_entry_type = 'Put Away'
+	doclist.company = dn.company
+	for i in dn.delivery_note_item:
+		if i.rejected_quantity > 0:
+			doclist.append("items",{
+				"item_code" : i.sku,
+				"s_warehouse" : i.warehouse,
+				"t_warehouse" : dn.returned_warehouse,
+				"qty" : i.rejected_quantity
+			})
+	if len(doclist.items) > 0:
+		doclist.save()
+	

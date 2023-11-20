@@ -529,6 +529,16 @@ def make_return_doc(doctype: str, source_name: str, target_doc=None):
 		set_missing_values,
 	)
 
+	if doctype == 'Delivery Note':
+		for i in doclist.items:
+			return_item = {
+				"sku" : i.item_code,
+				"product_name" : i.item_name,
+				"total_quantity" : -1 * i.qty,
+				"warehouse" : i.warehouse
+			}
+			doclist.append('delivery_note_item',return_item)
+
 	doclist.set_onload("ignore_price_list", True)
 
 	return doclist

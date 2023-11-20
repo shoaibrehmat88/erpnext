@@ -11,15 +11,15 @@ frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on("Delivery Note", {
 	on_submit: function(frm){
-		debugger
-		if (frm.doc.is_return == 1 && frm.doc.docstatus == 1){
-			let me = frm;
-			frappe.model.open_mapped_doc({
-				method: "erpnext.stock.doctype.delivery_note.delivery_note.make_stock_return_entry",
-				frm: me
-			})
+		// debugger
+		// if (frm.doc.is_return == 1 && frm.doc.docstatus == 1){
+		// 	let me = frm;
+		// 	frappe.model.open_mapped_doc({
+		// 		method: "erpnext.stock.doctype.delivery_note.delivery_note.make_stock_return_entry",
+		// 		frm: me
+		// 	})
 
-		}
+		// }
 	},
 	setup: function(frm) {
 		frm.custom_make_buttons = {
@@ -103,6 +103,20 @@ frappe.ui.form.on("Delivery Note", {
 			return {
 				filters: {
 					'occupied': 0
+				}
+			}
+		});
+		frm.set_query('accepted_warehouse', function() {
+			return {
+				filters: {
+					'warehouse_type': 'Return'
+				}
+			}
+		});
+		frm.set_query('returned_warehouse', function() {
+			return {
+				filters: {
+					'warehouse_type': 'Rejection'
 				}
 			}
 		});

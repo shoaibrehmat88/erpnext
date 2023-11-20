@@ -17,6 +17,7 @@
   "posting_date",
   "posting_time",
   "set_posting_time",
+  "accepted_warehouse",
   "column_break_10",
   "company",
   "amended_from",
@@ -45,6 +46,7 @@
   "set_warehouse",
   "set_target_warehouse",
   "section_break_30",
+  "delivery_note_item",
   "items",
   "section_break_31",
   "total_qty",
@@ -519,6 +521,7 @@
   },
   {
    "allow_bulk_edit": 1,
+   "depends_on": "eval:doc.is_return == 0",
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Delivery Note Item",
@@ -1400,16 +1403,32 @@
    "depends_on": "eval:doc.is_return == 1",
    "fieldname": "returned_warehouse",
    "fieldtype": "Link",
-   "label": "Returned Warehouse",
+   "label": "Rejected Warehouse",
    "mandatory_depends_on": "eval:doc.is_return == 1",
    "options": "Warehouse"
+  },
+  {
+   "depends_on": "eval:doc.is_return == 1",
+   "fieldname": "accepted_warehouse",
+   "fieldtype": "Link",
+   "label": "Accepted Warehouse",
+   "mandatory_depends_on": "eval: doc.is_return == 1",
+   "options": "Warehouse"
+  },
+  {
+   "depends_on": "eval:doc.is_return == 1",
+   "fieldname": "delivery_note_item",
+   "fieldtype": "Table",
+   "label": "Delivery Note Item",
+   "mandatory_depends_on": "eval:doc.is_return == 1",
+   "options": "Delivery Note Return Item"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-17 16:01:06.666316",
+ "modified": "2023-11-20 10:11:29.854762",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
