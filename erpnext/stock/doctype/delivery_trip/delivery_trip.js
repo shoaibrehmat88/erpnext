@@ -6,13 +6,29 @@ frappe.ui.form.on('Delivery Trip', {
 		if(frm.doc.delivery_partner == undefined || frm.doc.delivery_partner == ''){
 			frappe.throw('Please select the Delivery Partner first!');
 		}
+		$.each(frm.doc['delivery_stops'] || [], function(i, row) {
+			if(row.custom_cn == frm.doc.scan_barcode){
+				frappe.throw('Duplicate consignment number not allowed');
+			}
+		});				
+
 		frappe.call({
 			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.barcode",
 			args: {
-				barcode: frm.doc.barcode,
+				barcode: frm.doc.scan_barcode,
 				delivery_partner : frm.doc.delivery_partner
 			},
 			callback: (data) => {
+				if(data.message){
+					var childTable = frm.fields_dict['delivery_stops'].grid;
+					var newRow = childTable.add_new_row();
+					newRow.delivery_note = data.message.name;
+					newRow.custom_cn = data.message.custom_cn;
+					newRow.custom_consignee = data.message.custom_consignee_name;
+					newRow.custom_city = data.message.custom_consignee_city;
+					newRow.address = 'Online Customer-Billing';
+					childTable.refresh();
+				}
 			}
 		});
 		frm.doc.scan_barcode = '';
@@ -25,7 +41,7 @@ frappe.ui.form.on('Delivery Trip', {
     },
 	setup: function (frm) {
 		frm.set_indicator_formatter('customer', (stop) => (stop.visited) ? "green" : "orange");
-
+		frm.doc.departure_time = frappe.datetime.now_datetime();
 		frm.set_query("driver", function () {
 			return {
 				filters: {
@@ -62,6 +78,8 @@ frappe.ui.form.on('Delivery Trip', {
 	},
 
 	refresh: function (frm) {
+		jQuery('buton.grid-add-row').hide()
+
 		if (frm.doc.docstatus == 1 && frm.doc.delivery_stops.length > 0) {
 			frm.add_custom_button(__("Notify Customers via Email"), function () {
 				frm.trigger('notify_customers');
