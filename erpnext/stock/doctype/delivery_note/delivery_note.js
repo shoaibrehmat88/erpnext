@@ -88,7 +88,9 @@ frappe.ui.form.on("Delivery Note", {
 		frappe.db.set_value('Picking Bin',frm.doc.custom_picking_bin,'occupied',1);
 	},
 	refresh: function(frm) {
-		frm.fields_dict['delivery_note_item'].grid.only_sortable();
+		frm.set_df_property('delivery_note_item', 'cannot_add_rows', true);
+		frm.set_df_property('delivery_note_item', 'cannot_delete_rows', true);
+		// frm.fields_dict['delivery_note_item'].grid.only_sortable();
 		frm.set_query('custom_picking_bin', function() {
 			return {
 				filters: {
