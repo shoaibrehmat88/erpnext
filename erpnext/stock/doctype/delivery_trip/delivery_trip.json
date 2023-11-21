@@ -24,9 +24,8 @@
   "employee",
   "section_break_ro9xo",
   "delivery_partner",
-  "column_break_nwz5o",
-  "scan_barcode",
   "delivery_service_stops",
+  "scan_barcode",
   "delivery_stops",
   "calculate_arrival_time",
   "optimize_route",
@@ -203,15 +202,11 @@
    "fieldtype": "Link",
    "label": "Delivery Company",
    "options": "Sales Partner"
-  },
-  {
-   "fieldname": "column_break_nwz5o",
-   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-21 09:43:10.815141",
+ "modified": "2023-11-21 10:12:58.204706",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

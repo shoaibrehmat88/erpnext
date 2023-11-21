@@ -1,10 +1,12 @@
 // Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
-
+jQuery(document).ready(function($){
+	jQuery('buton.grid-add-row').remove();
+})
 frappe.ui.form.on('Delivery Trip', {
 	scan_barcode: function(frm){
 		if(frm.doc.delivery_partner == undefined || frm.doc.delivery_partner == ''){
-			frappe.throw('Please select the Delivery Partner first!');
+			frappe.throw('Please select the Delivery Company first!');
 		}
 		$.each(frm.doc['delivery_stops'] || [], function(i, row) {
 			if(row.custom_cn == frm.doc.scan_barcode){
@@ -78,40 +80,40 @@ frappe.ui.form.on('Delivery Trip', {
 	},
 
 	refresh: function (frm) {
-		jQuery('buton.grid-add-row').hide()
 
+		jQuery('button.grid-add-row').remove();
 		if (frm.doc.docstatus == 1 && frm.doc.delivery_stops.length > 0) {
 			frm.add_custom_button(__("Notify Customers via Email"), function () {
 				frm.trigger('notify_customers');
 			});
 		}
 
-		if (frm.doc.docstatus === 0) {
-			frm.add_custom_button(__('Delivery Note'), () => {
-				erpnext.utils.map_current_doc({
-					method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
-					source_doctype: "Delivery Note",
-					target: frm,
-					date_field: "posting_date",
-					setters: {
-					//	company: frm.doc.company,
-					custom_store_order_ref_id:'',
-					sales_partner:'',
+		// if (frm.doc.docstatus === 0) {
+		// 	frm.add_custom_button(__('Delivery Note'), () => {
+		// 		erpnext.utils.map_current_doc({
+		// 			method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
+		// 			source_doctype: "Delivery Note",
+		// 			target: frm,
+		// 			date_field: "posting_date",
+		// 			setters: {
+		// 			//	company: frm.doc.company,
+		// 			custom_store_order_ref_id:'',
+		// 			sales_partner:'',
 				
-					},
-					get_query_filters: {
-						docstatus: 1,
-						//company: frm.doc.company,
-						//sales_partner:'Aramex'
-					}
-				})
-			}, __("Fetch Orders"));
-		}
-		frm.add_custom_button(__("Delivery Notes"), function () {
-			frappe.set_route("List", "Delivery Note",
-					{'name': ["in", frm.doc.delivery_stops.map((stop) => {return stop.delivery_note;})]}
-			);
-		}, __("View"));
+		// 			},
+		// 			get_query_filters: {
+		// 				docstatus: 1,
+		// 				//company: frm.doc.company,
+		// 				//sales_partner:'Aramex'
+		// 			}
+		// 		})
+		// 	}, __("Fetch Orders"));
+		// }
+		// frm.add_custom_button(__("Delivery Notes"), function () {
+		// 	frappe.set_route("List", "Delivery Note",
+		// 			{'name': ["in", frm.doc.delivery_stops.map((stop) => {return stop.delivery_note;})]}
+		// 	);
+		// }, __("View"));
 	},
 
 	calculate_arrival_time: function (frm) {
