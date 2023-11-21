@@ -1072,6 +1072,17 @@ def make_return_stock_entries(dn):
 	if len(doclist.items) > 0:
 		doclist.save()
 		doclist.submit()
+		rse = frappe.new_doc('Stock Entry')
+		rse.stock_entry_type = 'Put Away'
+		rse.company = dn.company
+		for i in doclist.items:
+			rse.append("items",{
+				"item_code" : i.item_code,
+				"s_warehouse" : i.t_warehouse,
+				"t_warehouse" : i.s_warehouse,
+				"qty" : i.qty
+			})
+		rse.save()
 	doclist = frappe.new_doc('Stock Entry')
 	doclist.stock_entry_type = 'Put Away'
 	doclist.company = dn.company
@@ -1086,4 +1097,15 @@ def make_return_stock_entries(dn):
 	if len(doclist.items) > 0:
 		doclist.save()
 		doclist.submit()
+		rse = frappe.new_doc('Stock Entry')
+		rse.stock_entry_type = 'Put Away'
+		rse.company = dn.company
+		for i in doclist.items:
+			rse.append("items",{
+				"item_code" : i.item_code,
+				"s_warehouse" : i.t_warehouse,
+				"t_warehouse" : i.s_warehouse,
+				"qty" : i.qty
+			})
+		rse.save()
 	
