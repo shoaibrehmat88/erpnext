@@ -16,6 +16,8 @@
   "customer_name",
   "customer_type",
   "customer_group",
+  "merchant_id",
+  "is_enabled",
   "column_break0",
   "territory",
   "gender",
@@ -555,6 +557,18 @@
   {
    "fieldname": "column_break_54",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "merchant_id",
+   "fieldtype": "Link",
+   "label": "Merchant ID",
+   "options": "Company"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_enabled",
+   "fieldtype": "Check",
+   "label": "Is Enabled"
   }
  ],
  "icon": "fa fa-user",
@@ -568,7 +582,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2023-10-19 16:56:27.327035",
+ "modified": "2023-11-22 13:29:07.491458",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
