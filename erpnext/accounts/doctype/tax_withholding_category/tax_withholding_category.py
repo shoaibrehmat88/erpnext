@@ -472,6 +472,8 @@ def get_tds_amount(ldc, parties, inv, tax_details, vouchers):
 
 	supp_credit_amt += supp_jv_credit_amt
 	supp_credit_amt += inv.tax_withholding_net_total
+	#cp tax requirement invoice base
+	supp_credit_amt = inv.tax_withholding_net_total
 
 	for type in payment_entry_amounts:
 		if type.payment_type == "Pay":
