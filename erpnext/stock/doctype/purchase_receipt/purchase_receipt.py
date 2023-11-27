@@ -1017,6 +1017,55 @@ def get_item_wise_returned_qty(pr_doc):
 
 @frappe.whitelist()
 def make_purchase_invoice(source_name, target_doc=None):
+	if isinstance(target_doc,str):
+		target_doc = frappe.get_doc(json.loads(target_doc))
+	pr = frappe.get_doc('Purchase Receipt', source_name)
+	# check is sale base
+	target_doc = frappe.new_doc('Purchase Invoice')
+	if pr.custom_is_sale_base == 1:
+		target_doc.custom_is_sale_base = pr.custom_is_sale_base
+	target_d = frappe.new_doc("Purchase Invoice Item", target_doc, "items")
+	target_d.item_name = pr.name+"-"+pr.set_warehouse
+	target_d.purchase_request = pr.name
+	target_doc.supplier = pr.supplier
+	target_d.uom = "Pack"
+	target_d.qty = 1
+	target_d.rate = pr.total
+	target_d.purchase_receipt = pr.name
+	target_d.expense_account = '22101 - Stock Received But Not Billed - CP'
+	target_doc.append("items", target_d)
+	target_doc.total = pr.total
+	target_doc.total_qty = 1
+	for d in pr.taxes:
+		found = False
+		for i,_d in enumerate(target_doc.taxes):
+			if _d.account_head == d.account_head:
+				found = True
+				tax = _d.as_dict().copy()
+				target_doc.taxes.pop(i)
+				break
+		if found == False:
+			tax = frappe.new_doc("Purchase Taxes and Charges", target_doc, "taxes")
+		
+		tax.account_currency = d.account_currency
+		tax.account_head = d.account_head
+		tax.add_deduct_tax = d.add_deduct_tax
+		tax.description = d.description
+		tax.charge_type = d.charge_type
+		tax.rate = (tax.rate or 0) + d.rate
+		tax.cost_center =  d.cost_center
+		tax.tax_amount =  (tax.tax_amount or 0) + d.tax_amount
+		if tax.charge_type == 'Add':
+			target_doc.tax_withholding_net_total += tax.tax_amount
+		else:
+			target_doc.tax_withholding_net_total -= tax.tax_amount
+
+		target_doc.append("taxes",tax)
+
+	target_doc.set_onload("ignore_price_list", True)
+	return target_doc
+
+
 	from erpnext.accounts.party import get_payment_terms_template
 
 	doc = frappe.get_doc("Purchase Receipt", source_name)
