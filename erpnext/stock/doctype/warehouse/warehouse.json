@@ -24,9 +24,12 @@
   "email_id",
   "phone_no",
   "mobile_no",
+  "branch_code",
+  "contact_email",
   "column_break0",
   "address_line_1",
   "address_line_2",
+  "area_town",
   "city",
   "state",
   "pin",
@@ -249,13 +252,28 @@
   {
    "fieldname": "column_break_qajx",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch_code",
+   "fieldtype": "Data",
+   "label": "Branch Code"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email"
+  },
+  {
+   "fieldname": "area_town",
+   "fieldtype": "Data",
+   "label": "Area Town"
   }
  ],
  "icon": "fa fa-building",
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-05-29 13:10:43.333160",
+ "modified": "2023-11-28 09:43:10.719677",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Warehouse",
