@@ -17,6 +17,7 @@
   "customer_name",
   "tax_id",
   "order_type",
+  "bill",
   "column_break_7",
   "transaction_date",
   "delivery_date",
@@ -1621,6 +1622,11 @@
    "fieldname": "named_place",
    "fieldtype": "Data",
    "label": "Named Place"
+  },
+  {
+   "fieldname": "bill",
+   "fieldtype": "HTML",
+   "label": "Airway Bill"
   }
  ],
  "hide_toolbar": 1,
@@ -1628,7 +1634,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-16 22:26:49.272638",
+ "modified": "2023-11-29 13:54:14.293833",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
