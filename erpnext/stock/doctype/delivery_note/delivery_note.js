@@ -10,6 +10,32 @@ frappe.provide("erpnext.stock.delivery_note");
 frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on("Delivery Note", {
+	custom_barcode: function(frm){
+		if (frm.doc.custom_barcode != ''){
+			frappe.call({
+				method: "postex.api.dn.get_item_by_barcode",
+				type: "GET",
+				args: {
+					"barcode":frm.doc.custom_barcode
+				},
+				callback: function (r) {
+					var item_code = r.message;
+					frm.doc.items.forEach(function(d){
+						if (d.item_code == item_code){
+							if(d.qty < (d.pack_quantity + 1)){
+								frappe.throw("You cannot add item more then pick quantity");
+							}
+							d.pack_quantity += 1;
+							frm.refresh_field('items');
+							frm.doc.custom_barcode = '';
+							frm.refresh_field('custom_barcode');
+						}
+					});
+				},
+			});		
+		}
+
+	},
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Packing Slip': 'Packing Slip',
