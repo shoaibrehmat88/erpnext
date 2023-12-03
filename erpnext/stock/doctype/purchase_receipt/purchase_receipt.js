@@ -73,6 +73,11 @@ frappe.ui.form.on("Purchase Receipt", {
 		}
 
 		frm.events.add_custom_buttons(frm);
+
+		if (frm.doc.is_return == 1){
+			frm.doc.naming_series = 'MAT-PR-RET-.YYYY.-'
+			frm.refresh_field('naming_series');
+		}
 	},
 
 	add_custom_buttons: function(frm) {
