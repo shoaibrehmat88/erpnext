@@ -26,6 +26,25 @@ class DeliveryNote(SellingController):
 			else:
 				self.workflow_state = 'To Return'
 				self.naming_series = 'MAT-DN-RET-.YYYY.-'
+		self.postex_api_call()
+	
+	def postex_api_call(self):
+		#postex api call
+		import requests
+		import json
+		site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
+		url = site_url+"/services/oms/api/wms/status/update"
+		payload = json.dumps({
+			"cnNumber": self.custom_cn,
+			"orderStatus": self.workflow_state,
+			"updatedDateTime": frappe.utils.nowdate()
+		})
+		headers = {
+			'Content-Type': 'application/json',
+			'Accept': '*/*'
+		}
+		response = requests.request("POST", url, headers=headers, data=payload)
+		print(response.text)
 
 	def __init__(self, *args, **kwargs):
 		super(DeliveryNote, self).__init__(*args, **kwargs)
@@ -274,6 +293,7 @@ class DeliveryNote(SellingController):
 					frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")
 			# make_stock_return_doc('Stock Entry',self.name)
 			make_return_stock_entries(self)
+		self.postex_api_call()
 
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()
