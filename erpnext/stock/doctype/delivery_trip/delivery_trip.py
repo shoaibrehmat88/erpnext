@@ -12,6 +12,28 @@ from frappe.utils import cint, get_datetime, get_link_to_form
 
 
 class DeliveryTrip(Document):
+	def before_save(self):
+		self.postex_api_call()
+
+	def postex_api_call(self):
+		#postex api call
+		for dn in self.delivery_stops:
+			import requests
+			import json
+			site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
+			url = site_url+"/services/oms/api/wms/status/update"
+			payload = json.dumps({
+				"cnNumber": dn.custom_cn,
+				"orderStatus": self.workflow_state,
+				"updatedDateTime": frappe.utils.nowdate()
+			})
+			headers = {
+				'Content-Type': 'application/json',
+				'Accept': '*/*'
+			}
+			response = requests.request("POST", url, headers=headers, data=payload)
+			print(response.text)
+
 	def __init__(self, *args, **kwargs):
 		super(DeliveryTrip, self).__init__(*args, **kwargs)
 
@@ -32,6 +54,7 @@ class DeliveryTrip(Document):
 	def on_submit(self):
 		self.update_status()
 		self.update_delivery_notes()
+		self.postex_api_call()
 
 	def on_update_after_submit(self):
 		self.update_status()

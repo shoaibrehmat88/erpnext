@@ -122,6 +122,26 @@ class StockLedgerEntry(Document):
 			from erpnext.stock.doctype.serial_no.serial_no import process_serial_no
 
 			process_serial_no(self)
+		#postex
+		print(self)
+		#postex api call
+		warehouse = frappe.get_doc('Warehouse',self.warehouse)
+		if warehouse.get('custom_is_sync') == 1 and warehouse.get('custom_oms_location'):
+			import requests
+			import json
+			site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
+			url = site_url+"/services/oms/api/wms/product/quanity/update"
+			payload = json.dumps({
+				"locationReference": warehouse.get('custom_oms_location'),
+				"productReference": self.item_code,
+				"quantity": self.actual_qty
+			})
+			headers = {
+				'Content-Type': 'application/json',
+				'Accept': '*/*'
+			}
+			response = requests.request("POST", url, headers=headers, data=payload)
+			print(response.text)
 
 	def calculate_batch_qty(self):
 		if self.batch_no:
