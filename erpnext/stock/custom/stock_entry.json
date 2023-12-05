@@ -105,7 +105,7 @@
    "name": "Stock Entry-custom_entry_purpose",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "Transfer\nDead Stock\nExpired Stock\nBreakage\nFranchise",
+   "options": "Transfer\nDead Stock\nExpired Stock\nBreakage\nFranchise\nAdjustment\nDemand",
    "owner": "Administrator",
    "permlevel": 0,
    "precision": "",
