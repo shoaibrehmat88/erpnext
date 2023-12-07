@@ -1406,6 +1406,9 @@ def get_outstanding_reference_documents(args):
 
 	if args.get("party_type") == "Member":
 		return
+	
+	if args.get("cost_center"):
+		args.pop("cost_center")
 
 	if not args.get("get_outstanding_invoices") and not args.get("get_orders_to_be_billed"):
 		args["get_outstanding_invoices"] = True
