@@ -113,7 +113,30 @@ frappe.ui.form.on("Delivery Note", {
 	custom_picking_bin: function(frm){
 		frappe.db.set_value('Picking Bin',frm.doc.custom_picking_bin,'occupied',1);
 	},
+	onload: function(frm){
+		if (frm.doc.docstatus == 0 && !frm.is_new() && (frm.doc.custom_picking_bin == undefined || frm.doc.custom_picking_bin == '')){
+			frm.set_df_property('custom_picking_bin','reqd',true);
+			frm.doc.custom_picking_bin = '';
+			frm.refresh_field('custom_picking_bin');
+			frm.dirty();
+			jQuery('button.actions-btn-group').hide();
+			frm.enable_save();
+		}
+
+	},
+	custom_print_airway_bill: function(frm){
+		window.open(frm.doc.custom_airway_bill);
+	},
 	refresh: function(frm) {
+		console.log(frm.doc.custom_picking_bin);
+		if (frm.doc.docstatus == 0 && !frm.is_new() && (frm.doc.custom_picking_bin == undefined || frm.doc.custom_picking_bin == '')){
+			frm.set_df_property('custom_picking_bin','reqd',true);
+			frm.doc.custom_picking_bin = '';
+			frm.refresh_field('custom_picking_bin');
+			frm.dirty();
+			jQuery('button.actions-btn-group').hide();
+			frm.enable_save();
+		}
 		frm.set_df_property('delivery_note_item', 'cannot_add_rows', true);
 		frm.set_df_property('delivery_note_item', 'cannot_delete_rows', true);
 		// frm.fields_dict['delivery_note_item'].grid.only_sortable();

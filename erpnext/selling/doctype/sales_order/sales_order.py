@@ -261,6 +261,7 @@ class SalesOrder(SellingController):
 		
 		#postex
 		dn = make_delivery_note(self.name)
+		dn.custom_ariway_bill = self.custom_airway_bill
 		dn.save()
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
@@ -715,7 +716,7 @@ def make_delivery_note(source_name, target_doc=None, skip_item_mapping=False):
 			"condition": condition,
 		}
 
-	target_doc = get_mapped_doc("Sales Order", source_name, mapper, target_doc, set_missing_values)
+	target_doc = get_mapped_doc("Sales Order", source_name, mapper, target_doc, set_missing_values,ignore_permissions=True)
 
 	target_doc.set_onload("ignore_price_list", True)
 

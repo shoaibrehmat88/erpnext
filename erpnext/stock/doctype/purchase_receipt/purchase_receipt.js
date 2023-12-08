@@ -52,11 +52,45 @@ frappe.ui.form.on("Purchase Receipt", {
 				filters: {'company': frm.doc.company }
 			}
 		});
+		frm.set_query('set_warehouse', function(doc) {
+			return {
+				filters: {
+					"warehouse_type": "Sellable",
+					"company": doc.company
+				}
+			};
+		});
+
+		frm.set_query('rejected_warehouse', function(doc) {
+			return {
+				filters: {
+					"warehouse_type": "Rejection",
+					"company": doc.company
+				}
+			};
+		});
 
 	},
 	onload: function(frm) {
-		erpnext.queries.setup_queries(frm, "Warehouse", function() {
-			return erpnext.queries.warehouse(frm.doc);
+		// erpnext.queries.setup_queries(frm, "Warehouse", function() {
+		// 	return erpnext.queries.warehouse(frm.doc);
+		// });
+		frm.set_query('set_warehouse', function(doc) {
+			return {
+				filters: {
+					"warehouse_type": "Sellable",
+					"company": doc.company
+				}
+			};
+		});
+
+		frm.set_query('rejected_warehouse', function(doc) {
+			return {
+				filters: {
+					"warehouse_type": "Rejection",
+					"company": doc.company
+				}
+			};
 		});
 	},
 
