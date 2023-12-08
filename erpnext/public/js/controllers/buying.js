@@ -99,7 +99,7 @@ erpnext.buying.BuyingController = class BuyingController extends erpnext.Transac
 			else {
 				return{
 					query: "erpnext.controllers.queries.item_query",
-					filters: { 'supplier': me.frm.doc.supplier, 'is_purchase_item': 1, 'has_variants': 0}
+					filters: { 'supplier': me.frm.doc.supplier, 'is_purchase_item': 1, 'has_variants': 0,"custom_merchant":me.frm.doc.company}
 				}
 			}
 		});

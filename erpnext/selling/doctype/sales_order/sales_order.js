@@ -124,6 +124,19 @@ frappe.ui.form.on("Sales Order", {
 			return query;
 		});
 
+		frm.set_query('item_code', 'items', function(doc, cdt, cdn) {
+			let query = {
+				filters: {
+					"company":frm.doc.company
+				}
+			};
+			// if (row.item_code) {
+			// 	query.query = "erpnext.controllers.queries.warehouse_query";
+			// 	query.filters.push(["Bin", "item_code", "=", row.item_code]);
+			// }
+			return query;
+		});
+
 		// On cancel and amending a sales order with advance payment, reset advance paid amount
 		if (frm.is_new()) {
 			frm.set_value("advance_paid", 0)

@@ -406,7 +406,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		let blacklist = ['Purchase Invoice', 'BOM'];
 		if(this.frm.doc.docstatus===1 && !in_list(["Lost", "Stopped", "Closed"], this.frm.doc.status)
 			&& !blacklist.includes(this.frm.doctype)) {
-			this.frm.page.add_menu_item(__('Send SMS'), function() { me.send_sms(); });
+			// this.frm.page.add_menu_item(__('Send SMS'), function() { me.send_sms(); });
 		}
 	}
 
