@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Assign Pick List",
  "links": [],
- "modified": "2023-11-17 05:41:28.078238",
+ "modified": "2023-12-07 22:44:10.163189",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Assign Pick List",
@@ -24,7 +24,7 @@
   {
    "document_type": "Delivery Note",
    "label": "\ud83d\udd34 Pending To Assign",
-   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"not like\",\"%picker@gmail.com%\",false]]"
+   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"is\",\"not set\",false]]"
   },
   {
    "document_type": "Delivery Note",
