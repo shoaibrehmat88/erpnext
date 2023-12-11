@@ -39,7 +39,8 @@ frappe.ui.form.on('Delivery Trip', {
 	onload: function(frm) {
         frm.set_df_property('departure_time', 'hidden', 1); // Hide the field
         frm.toggle_reqd('departure_time', false); // Make the field mandatory
-		frm.fields_dict['departure_time'].df.default = frappe.datetime.get_today();
+		// frm.fields_dict['departure_time'].df.default = frappe.datetime.get_today();
+		frm.doc.departure_time = frappe.datetime.get_today()
     },
 	setup: function (frm) {
 		frm.set_indicator_formatter('customer', (stop) => (stop.visited) ? "green" : "orange");
