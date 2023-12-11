@@ -102,6 +102,16 @@ frappe.ui.form.on("Delivery Note", {
 				}
 			}
 		});
+		frm.set_query("warehouse", "items", function(doc, cdt, cdn) {
+			let d = locals[cdt][cdn];
+			return {
+				filters: {
+					company: doc.company,
+					custom_is_pickable_bin: 1,
+					is_group: 0
+				}
+			}
+		});
 
 		frm.set_df_property('packed_items', 'cannot_add_rows', true);
 		frm.set_df_property('packed_items', 'cannot_delete_rows', true);
@@ -158,6 +168,16 @@ frappe.ui.form.on("Delivery Note", {
 			return {
 				filters: {
 					'warehouse_type': 'Rejection'
+				}
+			}
+		});
+		frm.set_query("warehouse", "items", function(doc, cdt, cdn) {
+			let d = locals[cdt][cdn];
+			return {
+				filters: {
+					company: doc.company,
+					custom_is_pickable_bin: 1,
+					is_group: 0
 				}
 			}
 		});
