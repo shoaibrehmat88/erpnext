@@ -52,6 +52,14 @@ frappe.ui.form.on('Delivery Trip', {
 				}
 			};
 		});
+		frm.set_query("custom_location", function () {
+			return {
+				filters: {
+					"custom_is_main_location": 1,
+					"company" : frappe.defaults.get_user_default("Company")
+				}
+			};
+		});
 
 		frm.set_query("address", "delivery_stops", function (doc, cdt, cdn) {
 			var row = locals[cdt][cdn];
