@@ -1266,4 +1266,16 @@ function setup_warehouse(frm){
 		}
 	}
 
+	if(frm.doc.stock_entry_type == 'Stock Discard'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type': 1,'Rejection':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Rejection','custom_is_pickable_bin':1,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
 }
