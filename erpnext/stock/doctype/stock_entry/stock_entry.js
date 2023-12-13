@@ -1241,5 +1241,29 @@ function setup_warehouse(frm){
 			}
 		}
 	}
+	if(frm.doc.stock_entry_type == 'Damage Return'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin': 1,'is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Sellable','is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
+	if(frm.doc.stock_entry_type == 'Stock Transfer'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'custom_is_pickable_bin': 1,'is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'custom_is_pickable_bin':1,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
 
 }
