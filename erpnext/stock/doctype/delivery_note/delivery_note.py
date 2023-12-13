@@ -1093,7 +1093,7 @@ def make_return_stock_entries(dn):
 		doclist.save()
 		doclist.submit()
 		rse = frappe.new_doc('Stock Entry')
-		rse.stock_entry_type = 'Put Away'
+		rse.stock_entry_type = 'Put Away Return'
 		rse.company = dn.company
 		for i in doclist.items:
 			rse.append("items",{
@@ -1104,7 +1104,7 @@ def make_return_stock_entries(dn):
 			})
 		rse.save()
 	doclist = frappe.new_doc('Stock Entry')
-	doclist.stock_entry_type = 'Put Away'
+	doclist.stock_entry_type = 'Put Away Damage'
 	doclist.company = dn.company
 	for i in dn.delivery_note_item:
 		if i.rejected_quantity > 0:
@@ -1118,7 +1118,7 @@ def make_return_stock_entries(dn):
 		doclist.save()
 		doclist.submit()
 		rse = frappe.new_doc('Stock Entry')
-		rse.stock_entry_type = 'Put Away'
+		rse.stock_entry_type = 'Put Away Damage'
 		rse.company = dn.company
 		for i in doclist.items:
 			rse.append("items",{

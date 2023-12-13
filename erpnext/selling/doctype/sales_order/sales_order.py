@@ -711,6 +711,7 @@ def make_delivery_note(source_name, target_doc=None, skip_item_mapping=False):
 				"rate": "rate",
 				"name": "so_detail",
 				"parent": "against_sales_order",
+				"": "warehouse"
 			},
 			"postprocess": update_item,
 			"condition": condition,

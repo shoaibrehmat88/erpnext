@@ -71,7 +71,15 @@ frappe.ui.form.on('Stock Entry', {
 				});
 			}
 		});
-
+		if (frm.doc.stock_entry_type == 'Put Away GRN'){
+			frm.set_query('t_warehouse','items',function(){
+				return {
+					filters : {
+						"custom_is_pickable_bin" : 1
+					}
+				};
+			});
+		}
 		frm.set_query('batch_no', 'items', function(doc, cdt, cdn) {
 			var item = locals[cdt][cdn];
 			if(!item.item_code) {
@@ -115,6 +123,7 @@ frappe.ui.form.on('Stock Entry', {
 		if(!check_should_not_attach_bom_items(frm.doc.bom_no)) {
 			erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 		}
+		setup_warehouse(frm);
 	},
 
 	setup_quality_inspection: function(frm) {
@@ -171,6 +180,15 @@ frappe.ui.form.on('Stock Entry', {
 		frm.trigger("get_items_from_transit_entry");
 
 		if(!frm.doc.docstatus) {
+			frm.freeze = true;
+			frm.doc.items.forEach(function(item){
+				var is_pickable = frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin')
+				if (is_pickable == 0){
+					item.t_warehouse = '';
+				}
+			});
+			frm.refresh_field('items')
+			frm.freeze = false;
 			frm.trigger('validate_purpose_consumption');
 			frm.add_custom_button(__('Material Request'), function() {
 				frappe.model.with_doctype('Material Request', function() {
@@ -345,6 +363,8 @@ frappe.ui.form.on('Stock Entry', {
 				}
 			};
 		}
+		setup_warehouse(frm);
+
 	},
 
 	get_items_from_transit_entry: function(frm) {
@@ -379,6 +399,7 @@ frappe.ui.form.on('Stock Entry', {
 		frm.remove_custom_button('Bill of Materials', "Get Items From");
 		frm.events.show_bom_custom_button(frm);
 		frm.trigger('add_to_transit');
+		setup_warehouse(frm);
 	},
 
 	purpose: function(frm) {
@@ -1170,3 +1191,43 @@ function check_should_not_attach_bom_items(bom_no) {
 }
 
 extend_cscript(cur_frm.cscript, new erpnext.stock.StockEntry({frm: cur_frm}));
+
+function setup_warehouse(frm){
+	if(frm.doc.stock_entry_type == 'Put Away GRN'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Sellable','is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
+	if(frm.doc.stock_entry_type == 'Put Away Damage'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Damage','is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'custom_is_damaged_bin':1,'is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
+	if(frm.doc.stock_entry_type == 'Put Away Return'){
+		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'warehouse_type':'Return','is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
+			return {
+				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frappe.defaults.get_user_default('company')}
+			}
+		}
+	}
+
+}

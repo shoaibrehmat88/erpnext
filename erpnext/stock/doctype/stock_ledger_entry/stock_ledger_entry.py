@@ -125,23 +125,40 @@ class StockLedgerEntry(Document):
 		#postex
 		print(self)
 		#postex api call
+		makerequest = False
 		warehouse = frappe.get_doc('Warehouse',self.warehouse)
 		if warehouse.get('custom_is_sync') == 1 and warehouse.get('custom_oms_location'):
-			import requests
-			import json
-			site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
-			url = site_url+"/services/oms/api/wms/product/quanity/update"
-			payload = json.dumps({
-				"locationReference": warehouse.get('custom_oms_location'),
-				"productReference": self.item_code,
-				"quantity": self.actual_qty
-			})
-			headers = {
-				'Content-Type': 'application/json',
-				'Accept': '*/*'
-			}
-			response = requests.request("POST", url, headers=headers, data=payload)
-			print(response.text)
+			makerequest = True
+		
+		if makerequest == True:
+			_mr = True
+			# Stock Entry Type
+			stock_entry_type = ''
+			if self.voucher_type == 'Stock Entry':
+				stock_entry_type = frappe.db.get_value('Stock Entry',self.voucher_no,'stock_entry_type')
+				if stock_entry_type == 'Put Away GRN' or stock_entry_type == 'Put Away Return' or stock_entry_type == 'Put Away Damage':
+					_mr = False
+		
+			if _mr == True:
+				import requests
+				import json
+				qty = self.actual_qty
+				if stock_entry_type == 'Damage':
+					qty = -1 * qty
+				site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
+				url = site_url+"/services/oms/api/wms/product/quanity/update"
+				payload = json.dumps({
+					"locationReference": warehouse.get('custom_oms_location'),
+					"productReference": self.item_code,
+					"quantity": qty
+				})
+				headers = {
+					'Content-Type': 'application/json',
+					'Accept': '*/*'
+				}
+				response = requests.request("POST", url, headers=headers, data=payload)
+				print(response.text)
+
 
 	def calculate_batch_qty(self):
 		if self.batch_no:

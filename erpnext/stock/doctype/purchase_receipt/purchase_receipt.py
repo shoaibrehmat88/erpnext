@@ -1109,7 +1109,7 @@ def update_purchase_receipt_status(docname, status):
 @frappe.whitelist()
 def make_stock_entry(source_name, target_doc=None):
 	def set_missing_values(source, target):
-		target.stock_entry_type = "Put Away"
+		target.stock_entry_type = "Put Away GRN"
 		target.purpose = "Material Transfer"
 		target.set_missing_values()
 
