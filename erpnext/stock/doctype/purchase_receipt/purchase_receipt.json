@@ -430,7 +430,7 @@
   {
    "fieldname": "set_warehouse",
    "fieldtype": "Link",
-   "label": "Accepted Warehouse",
+   "label": "Accepted Warehouse|Location",
    "options": "Warehouse",
    "print_hide": 1,
    "reqd": 1
@@ -439,7 +439,7 @@
    "fieldname": "rejected_warehouse",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
-   "label": "Rejected Warehouse",
+   "label": "Rejected Warehouse|Location",
    "no_copy": 1,
    "oldfieldname": "rejected_warehouse",
    "oldfieldtype": "Link",
@@ -1242,7 +1242,7 @@
  "idx": 261,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-15 21:56:25.912250",
+ "modified": "2023-12-14 14:20:18.051633",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt",

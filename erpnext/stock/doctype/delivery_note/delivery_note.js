@@ -8,7 +8,7 @@ cur_frm.add_fetch('customer', 'tax_id', 'tax_id');
 frappe.provide("erpnext.stock");
 frappe.provide("erpnext.stock.delivery_note");
 frappe.provide("erpnext.accounts.dimensions");
-
+let currentState = '';
 frappe.ui.form.on("Delivery Note", {
 	custom_barcode: function(frm){
 		if (frm.doc.custom_barcode != ''){
@@ -37,6 +37,9 @@ frappe.ui.form.on("Delivery Note", {
 
 	},
 	setup: function(frm) {
+		frm.set_df_property('items', 'cannot_add_rows', true);
+		frm.set_df_property('items', 'multiple_rows', false);
+		frm.set_df_property('items', 'cannot_delete_rows', true);
 		frm.custom_make_buttons = {
 			'Packing Slip': 'Packing Slip',
 			'Installation Note': 'Installation Note',
@@ -124,6 +127,7 @@ frappe.ui.form.on("Delivery Note", {
 		frappe.db.set_value('Picking Bin',frm.doc.custom_picking_bin,'occupied',1);
 	},
 	onload: function(frm){
+		jQuery('button.grid-add-multiple-rows').remove();
 		if (frm.doc.docstatus == 0 && !frm.is_new() && (frm.doc.custom_picking_bin == undefined || frm.doc.custom_picking_bin == '')){
 			frm.set_df_property('custom_picking_bin','reqd',true);
 			frm.doc.custom_picking_bin = '';
@@ -132,19 +136,48 @@ frappe.ui.form.on("Delivery Note", {
 			jQuery('button.actions-btn-group').hide();
 			frm.enable_save();
 		}
+		if (currentState == ''){
+			currentState = frm.doc.workflow_state;
+		}
+		if (currentState != frm.doc.workflow_state){
+			frappe.toast({
+				message: __('Delivery note state changed to {0}', [frm.doc.workflow_state]),
+				seconds: 10,
+				indicator:'green'
+			});
+			currentState = frm.doc.workflow_state;
+		}
 
+	},
+	after_save: function(frm){
+		if (frm.doc.workflow_state == 'To Pick'){
+			frappe.set_route('List', 'Delivery Note');
+		}
 	},
 	custom_print_airway_bill: function(frm){
 		window.open(frm.doc.custom_airway_bill);
 	},
 	refresh: function(frm) {
-		console.log(frm.doc.custom_picking_bin);
+		// frm.fields_dict.workflow_state.$input.on('change', function() {
+        //     var currentWorkflowState = frm.doc.workflow_state; 
+        //     // Check if the workflow state is the one you are interested in
+        //     // if (currentWorkflowState === 'YourTargetWorkflowState') {
+        //         // Show a notification
+        //         frappe.toast({
+        //             message: __('GDN state changed to {0}', [currentWorkflowState]),
+        //             seconds: 10,
+		// 			indicator:'green'
+        //         });
+        //     // }
+        // });		
+		frm.set_df_property('items', 'multiple_rows', false);
 		if (frm.doc.docstatus == 0 && !frm.is_new() && (frm.doc.custom_picking_bin == undefined || frm.doc.custom_picking_bin == '')){
 			frm.set_df_property('custom_picking_bin','reqd',true);
 			frm.doc.custom_picking_bin = '';
 			frm.refresh_field('custom_picking_bin');
 			frm.dirty();
 			jQuery('button.actions-btn-group').hide();
+			jQuery('button.grid-add-multiple-rows').remove();
 			frm.enable_save();
 			frm.freeze = true;
 			frm.doc.items.forEach(function(item){
