@@ -150,7 +150,7 @@ frappe.ui.form.on("Delivery Note", {
 
 	},
 	after_save: function(frm){
-		if (frm.doc.workflow_state == 'To Pick'){
+		if (frm.doc.workflow_state == 'To Pack'){
 			frappe.set_route('List', 'Delivery Note');
 		}
 	},
