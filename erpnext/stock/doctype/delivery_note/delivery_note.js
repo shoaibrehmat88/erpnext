@@ -140,20 +140,26 @@ frappe.ui.form.on("Delivery Note", {
 			currentState = frm.doc.workflow_state;
 		}
 		if (currentState != frm.doc.workflow_state){
+			var msg = '';
+			if (frm.doc.workflow_state == 'To Pick'){
+				msg = 'picked';
+			}else if(frm.doc.workflow_state == 'To Pack'){
+				msg = 'packed';
+			}
 			frappe.toast({
-				message: __('Delivery note state changed to {0}', [frm.doc.workflow_state]),
+				message: __('Sales order is {0} successfully.', [msg]),
 				seconds: 10,
 				indicator:'green'
 			});
 			currentState = frm.doc.workflow_state;
 		}
-
-	},
-	after_save: function(frm){
-		if (frm.doc.workflow_state == 'To Pack'){
+		if (currentState == 'To Pick' && frm.doc.workflow_state == 'To Pack'){
 			frappe.set_route('List', 'Delivery Note');
 		}
+
 	},
+	// after_save: function(frm){
+	// },
 	custom_print_airway_bill: function(frm){
 		window.open(frm.doc.custom_airway_bill);
 	},
