@@ -145,6 +145,8 @@ frappe.ui.form.on("Delivery Note", {
 				msg = 'picked';
 			}else if(frm.doc.workflow_state == 'To Pack'){
 				msg = 'packed';
+			}else if(frm.doc.workflow_state == 'Packed'){
+				msg = 'completed';
 			}
 			frappe.toast({
 				message: __('Sales order is {0} successfully.', [msg]),
