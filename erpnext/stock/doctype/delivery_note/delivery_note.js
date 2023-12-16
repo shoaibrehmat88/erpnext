@@ -201,7 +201,6 @@ frappe.ui.form.on("Delivery Note", {
 						// Check if the call was successful
 						if (!response.exc && response.message) {
 							var is_pickable = response.message.custom_is_pickable_bin;
-							console.log(is_pickable);
 							if (is_pickable == 0){
 								item.warehouse = '';
 							}
