@@ -344,7 +344,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends erpn
 				// this.frm.add_custom_button(__('Installation Note'), function() {
 					// me.make_installation_note() }, __('Create'));
 
-			if (doc.docstatus==1) {
+			if (doc.docstatus==1 && doc.custom_auto_return == 0) {
 				this.frm.add_custom_button(__('Sales Return'), function() {
 					me.make_sales_return() }, __('Create'));
 			}
@@ -356,16 +356,16 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends erpn
 
 			if(doc.docstatus==0 && !doc.__islocal) {
 				if (doc.__onload && doc.__onload.has_unpacked_items) {
-					this.frm.add_custom_button(__('Packing Slip'), function() {
-						frappe.model.open_mapped_doc({
-							method: "erpnext.stock.doctype.delivery_note.delivery_note.make_packing_slip",
-							frm: me.frm
-						}) }, __('Create')
-					);
+					// this.frm.add_custom_button(__('Packing Slip'), function() {
+					// 	frappe.model.open_mapped_doc({
+					// 		method: "erpnext.stock.doctype.delivery_note.delivery_note.make_packing_slip",
+					// 		frm: me.frm
+					// 	}) }, __('Create')
+					// );
 				}
 			}
 
-			if (!doc.__islocal && doc.docstatus==1) {
+			if (!doc.__islocal && doc.docstatus==1 && doc.custom_auto_return == 0) {
 				this.frm.page.set_inner_btn_group_as_primary(__('Create'));
 			}
 		}

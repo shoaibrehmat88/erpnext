@@ -286,8 +286,11 @@ class DeliveryNote(SellingController):
 
 		#postex
 		frappe.db.set_value('Picking Bin',self.custom_picking_bin,'occupied',0)
-
-		if self.is_return == 1:
+		if self.custom_auto_return == 1:
+			rn = make_sales_return(self.name)
+			rn.custom_auto_return = 0
+			rn.save(ignore_permissions=True)
+		elif self.is_return == 1:
 			for i in self.delivery_note_item:
 				if i.total_quantity != (i.accepted_quantity + i.rejected_quantity + i.short_quantity):
 					frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")

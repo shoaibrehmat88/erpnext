@@ -266,10 +266,11 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 
 		const me = this;
 		if (!this.frm.is_new() && this.frm.doc.docstatus === 0) {
-			this.frm.add_custom_button(__("Quality Inspection(s)"), () => {
-				me.make_quality_inspection();
-			}, __("Create"));
-			this.frm.page.set_inner_btn_group_as_primary(__('Create'));
+			// postex
+			// this.frm.add_custom_button(__("Quality Inspection(s)"), () => {
+			// 	me.make_quality_inspection();
+			// }, __("Create"));
+			// this.frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 
 		const inspection_type = in_list(["Purchase Receipt", "Purchase Invoice"], this.frm.doc.doctype)

@@ -447,5 +447,12 @@ def get_driver_email(driver):
 def barcode(barcode,delivery_partner):
 	if barcode == '':
 		return
-	dn = frappe.get_doc('Delivery Note',{"custom_cn":barcode,"sales_partner": delivery_partner},["name","custom_cn","custom_consignee_name","custom_consignee_city"])
+	dn = frappe.get_doc('Delivery Note',{"custom_cn":barcode,"sales_partner": delivery_partner,"custom_auto_return":0,"is_return":0,"docstatus":1},["name","custom_cn","custom_consignee_name","custom_consignee_city"])
+	return dn
+
+@frappe.whitelist()
+def barcode_deliverycompany(barcode):
+	if barcode == '':
+		return
+	dn = frappe.get_doc('Delivery Note',{"custom_cn":barcode,"custom_auto_return":0,"is_return":0,"docstatus":1},["name","custom_cn","custom_consignee_name","custom_consignee_city","sales_partner"])
 	return dn

@@ -5,34 +5,56 @@ jQuery(document).ready(function($){
 })
 frappe.ui.form.on('Delivery Trip', {
 	scan_barcode: function(frm){
-		if(frm.doc.delivery_partner == undefined || frm.doc.delivery_partner == ''){
-			frappe.throw('Please select the Delivery Company first!');
-		}
 		$.each(frm.doc['delivery_stops'] || [], function(i, row) {
 			if(row.custom_cn == frm.doc.scan_barcode){
 				frappe.throw('Duplicate consignment number not allowed');
 			}
-		});				
-
-		frappe.call({
-			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.barcode",
-			args: {
-				barcode: frm.doc.scan_barcode,
-				delivery_partner : frm.doc.delivery_partner
-			},
-			callback: (data) => {
-				if(data.message){
-					var childTable = frm.fields_dict['delivery_stops'].grid;
-					var newRow = childTable.add_new_row();
-					newRow.delivery_note = data.message.name;
-					newRow.custom_cn = data.message.custom_cn;
-					newRow.custom_consignee = data.message.custom_consignee_name;
-					newRow.custom_city = data.message.custom_consignee_city;
-					newRow.address = 'Online Customer-Billing';
-					childTable.refresh();
-				}
-			}
 		});
+		if(frm.doc.delivery_partner == undefined || frm.doc.delivery_partner == ''){
+			frappe.call({
+				freeze:true,
+				method: "erpnext.stock.doctype.delivery_trip.delivery_trip.barcode_deliverycompany",
+				args: {
+					barcode: frm.doc.scan_barcode
+				},
+				callback: (data) => {
+					if(data.message){
+						var childTable = frm.fields_dict['delivery_stops'].grid;
+						var newRow = childTable.add_new_row();
+						newRow.delivery_note = data.message.name;
+						newRow.custom_cn = data.message.custom_cn;
+						newRow.custom_consignee = data.message.custom_consignee_name;
+						newRow.custom_city = data.message.custom_consignee_city;
+						newRow.address = 'Online Customer-Billing';
+						childTable.refresh();
+						frm.doc.delivery_partner = data.message.sales_partner
+						frm.refresh_field('delivery_partner')
+					}
+				}
+			});
+		}else{
+			frappe.call({
+				freeze:true,
+				method: "erpnext.stock.doctype.delivery_trip.delivery_trip.barcode",
+				args: {
+					barcode: frm.doc.scan_barcode,
+					delivery_partner : frm.doc.delivery_partner
+				},
+				callback: (data) => {
+					if(data.message){
+						var childTable = frm.fields_dict['delivery_stops'].grid;
+						var newRow = childTable.add_new_row();
+						newRow.delivery_note = data.message.name;
+						newRow.custom_cn = data.message.custom_cn;
+						newRow.custom_consignee = data.message.custom_consignee_name;
+						newRow.custom_city = data.message.custom_consignee_city;
+						newRow.address = 'Online Customer-Billing';
+						childTable.refresh();
+					}
+				}
+			});
+		}
+
 		frm.doc.scan_barcode = '';
 		refresh_field('scan_barcode');	
 	},
