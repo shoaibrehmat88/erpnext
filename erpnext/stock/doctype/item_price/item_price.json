@@ -11,6 +11,7 @@
   "item_code",
   "uom",
   "packing_unit",
+  "company",
   "column_break_17",
   "item_name",
   "brand",
@@ -214,13 +215,19 @@
    "fieldtype": "Link",
    "label": "Batch No",
    "options": "Batch"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-15 08:26:04.041861",
+ "modified": "2023-12-20 17:28:09.850373",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Price",
