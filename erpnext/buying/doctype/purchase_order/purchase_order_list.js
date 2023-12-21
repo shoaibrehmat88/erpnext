@@ -23,28 +23,29 @@ frappe.listview_settings['Purchase Order'] = {
 		}
 	},
 	onload: function (listview) {
+		jQuery('div.menu-btn-group').hide();
 		var method = "erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders";
 
-		listview.page.add_menu_item(__("Close"), function () {
-			listview.call_for_selected_items(method, { "status": "Closed" });
-		});
+		// listview.page.add_menu_item(__("Close"), function () {
+		// 	listview.call_for_selected_items(method, { "status": "Closed" });
+		// });
 
-		listview.page.add_menu_item(__("Reopen"), function () {
-			listview.call_for_selected_items(method, { "status": "Submitted" });
-		});
+		// listview.page.add_menu_item(__("Reopen"), function () {
+		// 	listview.call_for_selected_items(method, { "status": "Submitted" });
+		// });
 
 
-		listview.page.add_action_item(__("Purchase Invoice"), ()=>{
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Purchase Invoice");
-		});
+		// listview.page.add_action_item(__("Purchase Invoice"), ()=>{
+		// 	erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Purchase Invoice");
+		// });
 
 		listview.page.add_action_item(__("Purchase Receipt"), ()=>{
 			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Purchase Receipt");
 		});
 
-		listview.page.add_action_item(__("Advance Payment"), ()=>{
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Payment Entry");
-		});
+		// listview.page.add_action_item(__("Advance Payment"), ()=>{
+		// 	erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Payment Entry");
+		// });
 
 	}
 };

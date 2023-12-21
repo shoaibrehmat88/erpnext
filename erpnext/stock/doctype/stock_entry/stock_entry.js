@@ -178,6 +178,9 @@ frappe.ui.form.on('Stock Entry', {
 	},
 
 	refresh: function(frm) {
+		frm.set_df_property('items', 'cannot_add_rows', true);
+		frm.set_df_property('items', 'multiple_rows', false);
+		frm.set_df_property('items', 'cannot_delete_rows', true);
 		frm.trigger("get_items_from_transit_entry");
 		if(!frm.doc.docstatus) {
 			frm.freeze = true;

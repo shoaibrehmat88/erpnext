@@ -45,6 +45,9 @@ frappe.ui.form.on("Purchase Order", {
 	},
 
 	refresh: function(frm) {
+		frm.set_df_property('items', 'cannot_add_rows', true);
+		frm.set_df_property('items', 'multiple_rows', false);
+		frm.set_df_property('items', 'cannot_delete_rows', true);
 		if(frm.doc.is_old_subcontracting_flow) {
 			frm.trigger('get_materials_from_supplier');
 
@@ -213,11 +216,11 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends e
 				if (this.frm.has_perm("submit")) {
 					if(flt(doc.per_billed, 6) < 100 || flt(doc.per_received, 6) < 100) {
 						if (doc.status != "On Hold") {
-							this.frm.add_custom_button(__('Hold'), () => this.hold_purchase_order(), __("Status"));
+							// this.frm.add_custom_button(__('Hold'), () => this.hold_purchase_order(), __("Status"));
 						} else{
-							this.frm.add_custom_button(__('Resume'), () => this.unhold_purchase_order(), __("Status"));
+							// this.frm.add_custom_button(__('Resume'), () => this.unhold_purchase_order(), __("Status"));
 						}
-						this.frm.add_custom_button(__('Close'), () => this.close_purchase_order(), __("Status"));
+						// this.frm.add_custom_button(__('Close'), () => this.close_purchase_order(), __("Status"));
 					}
 				}
 
