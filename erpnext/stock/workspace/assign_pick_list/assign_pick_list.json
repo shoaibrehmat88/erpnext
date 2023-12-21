@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Assign Pick List",
  "links": [],
- "modified": "2023-12-07 22:44:10.163189",
+ "modified": "2023-12-13 15:31:11.569217",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Assign Pick List",
@@ -29,7 +29,7 @@
   {
    "document_type": "Delivery Note",
    "label": "\ud83d\udfe0 Assigned Pick List",
-   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"like\",\"%picker@gmail.com%\",false]]"
+   "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"like\",\"%picker%\",false]]"
   },
   {
    "document_type": "Delivery Note",
