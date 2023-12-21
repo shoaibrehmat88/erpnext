@@ -1243,7 +1243,7 @@ function setup_warehouse(frm){
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Rejection','custom_id_damaged_bin':0,'is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin':0,'is_group':0,'company':frm.doc.company}
 			}
 		}
 	}

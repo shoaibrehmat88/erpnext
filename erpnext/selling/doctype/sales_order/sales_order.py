@@ -262,6 +262,7 @@ class SalesOrder(SellingController):
 		#postex
 		dn = make_delivery_note(self.name)
 		dn.custom_ariway_bill = self.custom_airway_bill
+		dn.custom_location = self.location
 		dn.save()
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
