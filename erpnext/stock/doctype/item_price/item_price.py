@@ -76,6 +76,7 @@ class ItemPrice(Document):
 			"customer",
 			"supplier",
 			"batch_no",
+			"company"
 		)
 
 		number_fields = ["packing_unit"]
