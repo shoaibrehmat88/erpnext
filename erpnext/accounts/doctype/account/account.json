@@ -72,7 +72,6 @@
    "oldfieldname": "company",
    "oldfieldtype": "Link",
    "options": "Company",
-   "read_only": 1,
    "remember_last_selected_value": 1,
    "reqd": 1
   },
@@ -192,7 +191,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-04-11 16:08:46.983677",
+ "modified": "2023-12-22 19:39:19.093150",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
