@@ -18,6 +18,13 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	setup: function(frm) {
+		frm.set_query("mode_of_payment",function(){
+			return {
+				filters : [
+					['Mode of Payment Account', 'company', '=', frm.doc.company]
+				]
+			}
+		});
 		frm.set_query("paid_from", function() {
 			frm.events.validate_company(frm);
 
