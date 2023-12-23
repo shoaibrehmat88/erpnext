@@ -173,7 +173,7 @@ def _get_party_details(
 		]
 
 	# supplier tax withholding category
-	if party_type == "Supplier" and party:
+	if party_type == "Supplier" and party and company == 'Care Pharmacy':
 		party_details["supplier_tds"] = frappe.get_value(
 			party_type, party.name, "tax_withholding_category"
 		)
