@@ -1542,7 +1542,7 @@ class PurchaseInvoice(BuyingController):
 		self.db_set("release_date", None)
 
 	def set_tax_withholding(self):
-		if not self.apply_tds:
+		if not self.apply_tds or self.docstatus == 1:
 			return
 
 		if self.apply_tds and not self.get("tax_withholding_category"):
