@@ -136,11 +136,11 @@ class PurchaseInvoice(BuyingController):
 		if not self.cash_bank_account and flt(self.paid_amount):
 			frappe.throw(_("Cash or Bank Account is mandatory for making payment entry"))
 
-		if flt(self.paid_amount) + flt(self.write_off_amount) - flt(
-			self.get("rounded_total") or self.grand_total
-		) > 1 / (10 ** (self.precision("base_grand_total") + 1)):
+		# if flt(self.paid_amount) + flt(self.write_off_amount) - flt(
+		# 	self.get("rounded_total") or self.grand_total
+		# ) > 1 / (10 ** (self.precision("base_grand_total") + 1)):
 
-			frappe.throw(_("""Paid amount + Write Off Amount can not be greater than Grand Total"""))
+		# 	frappe.throw(_("""Paid amount + Write Off Amount can not be greater than Grand Total"""))
 
 	def create_remarks(self):
 		if not self.remarks:
