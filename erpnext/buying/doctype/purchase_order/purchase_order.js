@@ -291,7 +291,7 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends e
 				cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
 			}
 		} else if(doc.docstatus===0) {
-			cur_frm.cscript.add_from_mappers();
+			// cur_frm.cscript.add_from_mappers();
 		}
 	}
 
