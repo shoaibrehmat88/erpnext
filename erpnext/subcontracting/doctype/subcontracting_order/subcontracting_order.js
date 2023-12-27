@@ -35,8 +35,8 @@ frappe.ui.form.on('Subcontracting Order', {
 		frm.set_query('set_warehouse', () => {
 			return {
 				filters: {
-					company: frm.doc.company,
-					is_group: 0
+					"warehouse_type": "OMS",
+					"company": doc.company
 				}
 			};
 		});
