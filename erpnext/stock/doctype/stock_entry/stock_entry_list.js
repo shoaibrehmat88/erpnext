@@ -38,5 +38,8 @@ frappe.listview_settings['Stock Entry'] = {
 			}
 			return html;
 		}
+	},
+	onload:function(listview){
+		jQuery('div.menu-btn-group').hide();
 	}
 };

@@ -16,6 +16,7 @@ frappe.listview_settings['Delivery Note'] = {
 		}
 	},
 	onload: function (doclist) {
+		jQuery('div.menu-btn-group').hide();
 		// const action = () => {
 		// 	const selected_docs = doclist.get_checked_items();
 		// 	const docnames = doclist.get_checked_items(true);

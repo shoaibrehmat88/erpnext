@@ -242,7 +242,7 @@ erpnext.stock.PurchaseReceiptController = class PurchaseReceiptController extend
 
 				cur_frm.add_custom_button(__('Purchase Return'), this.make_purchase_return, __('Create'));
 
-				cur_frm.add_custom_button(__('Make Stock Entry'), cur_frm.cscript['Make Stock Entry'], __('Create'));
+				// cur_frm.add_custom_button(__('Make Stock Entry'), cur_frm.cscript['Make Stock Entry'], __('Create'));
 
 				//if(flt(this.frm.doc.per_billed) < 100) {
 					//cur_frm.add_custom_button(__('Purchase Invoice'), this.make_purchase_invoice, __('Create'));
