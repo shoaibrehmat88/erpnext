@@ -509,10 +509,10 @@ def make_purchase_receipt(source_name, target_doc=None):
 		{
 			"Purchase Order": {
 				"doctype": "Purchase Receipt",
-				"field_map": {"supplier_warehouse": "supplier_warehouse"},
+				"field_map": {"supplier_warehouse": "supplier_warehouse","set_warehouse":"custom_main_location"},
 				"validation": {
 					"docstatus": ["=", 1],
-				},
+				}
 			},
 			"Purchase Order Item": {
 				"doctype": "Purchase Receipt Item",

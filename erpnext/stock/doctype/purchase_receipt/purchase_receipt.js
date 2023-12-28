@@ -55,6 +55,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('set_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Sellable",
 					"company": doc.company
 				}
@@ -64,6 +65,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('rejected_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Rejection",
 					"company": doc.company
 				}
@@ -78,6 +80,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('set_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Sellable",
 					"company": doc.company
 				}
@@ -87,6 +90,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('rejected_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Rejection",
 					"company": doc.company
 				}
@@ -101,6 +105,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('set_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Sellable",
 					"company": doc.company
 				}
@@ -110,6 +115,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query('rejected_warehouse', function(doc) {
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_main_location],
 					"warehouse_type": "Rejection",
 					"company": doc.company
 				}

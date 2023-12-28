@@ -109,6 +109,7 @@ frappe.ui.form.on("Delivery Note", {
 			let d = locals[cdt][cdn];
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_location],
 					company: doc.company,
 					custom_is_pickable_bin: 1,
 					is_group: 0
@@ -240,6 +241,7 @@ frappe.ui.form.on("Delivery Note", {
 			let d = locals[cdt][cdn];
 			return {
 				filters: {
+					"parent_warehouse":['descendants of',doc.custom_location],
 					company: doc.company,
 					custom_is_pickable_bin: 1,
 					is_group: 0

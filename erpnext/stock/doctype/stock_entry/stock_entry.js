@@ -1199,75 +1199,84 @@ function check_should_not_attach_bom_items(bom_no) {
 extend_cscript(cur_frm.cscript, new erpnext.stock.StockEntry({frm: cur_frm}));
 
 function setup_warehouse(frm){
+	frm.set_query('custom_main_location',function(doc){
+		return {
+			filters: {
+				"warehouse_type":"OMS",
+				"company" : doc.company,
+				"custom_is_main_location": 1
+			}
+		}
+	});
 	if(frm.doc.stock_entry_type == 'Put Away GRN'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Sellable','is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Sellable','is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frm.doc.company}
+				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
 	if(frm.doc.stock_entry_type == 'Put Away Damage'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin':0,'is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin':0,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'custom_is_damaged_bin':1,'is_group':0,'company':frm.doc.company}
+				filters: {'custom_is_damaged_bin':1,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
 	if(frm.doc.stock_entry_type == 'Put Away Return'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Return','is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Return','is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frm.doc.company}
+				filters: {'custom_is_pickable_bin':1,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
 	if(frm.doc.stock_entry_type == 'Damage'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Pickable','custom_is_pickable_bin': 1,'is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Pickable','custom_is_pickable_bin': 1,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin':0,'is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Rejection','custom_is_damaged_bin':0,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
 	if(frm.doc.stock_entry_type == 'Damage Return'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Rejection','is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Rejection','is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Sellable','is_group':0,'company':frm.doc.company}
+				filters: {'warehouse_type':'Sellable','is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
 	if(frm.doc.stock_entry_type == 'Stock Transfer'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'custom_is_pickable_bin': 1,'is_group':0,'company':frm.doc.company}
+				filters: {'custom_is_pickable_bin': 1,'is_group':0,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'custom_is_pickable_bin':1,'company':frm.doc.company}
+				filters: {'custom_is_pickable_bin':1,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
@@ -1275,12 +1284,12 @@ function setup_warehouse(frm){
 	if(frm.doc.stock_entry_type == 'Stock Discard'){
 		frm.fields_dict['items'].grid.get_field("s_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type': 1,'Rejection':0,'company':frm.doc.company}
+				filters: {'warehouse_type': 'Rejection','company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 		frm.fields_dict['items'].grid.get_field("t_warehouse").get_query = function(doc, cdt, cdn) {
 			return {
-				filters: {'warehouse_type':'Rejection','custom_is_pickable_bin':1,'company':frm.doc.company}
+				filters: {'warehouse_type':'Rejection','custom_is_pickable_bin':1,'company':frm.doc.company,"parent_warehouse":['descendants of',doc.custom_main_location]}
 			}
 		}
 	}
