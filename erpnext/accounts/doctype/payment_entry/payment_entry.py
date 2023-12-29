@@ -696,7 +696,7 @@ class PaymentEntry(AccountsController):
 
 	def get_order_net_total(self):
 		if self.party_type == "Supplier":
-			doctype = "Purchase Order"
+			doctype = "Purchase Invoice"
 		else:
 			doctype = "Sales Order"
 
