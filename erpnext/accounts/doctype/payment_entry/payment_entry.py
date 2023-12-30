@@ -89,6 +89,19 @@ class PaymentEntry(AccountsController):
 		self.ensure_supplier_is_not_blocked()
 		self.set_status()
 
+	def before_save(self):
+		from datetime import datetime
+		current_datetime = datetime.now()
+		d = current_datetime.strftime('%d')
+		m = current_datetime.strftime('%m')
+		y = current_datetime.strftime('%y')
+		filter_condition = {'company': self.company, 'creation':current_datetime.strftime('%Y-%m-%d')}
+		count = frappe.get_all('Payment Entry', filters=filter_condition, fields=['count(*) as count'])[0]['count']
+		count += 1
+		padded_number = str(count).zfill(3)
+		self.custom_series = f'PE-{y}-{m}-{d}-{padded_number}'
+
+
 	def on_submit(self):
 		if self.difference_amount:
 			frappe.throw(_("Difference Amount must be zero"))

@@ -87,7 +87,7 @@ class PurchaseInvoice(BuyingController):
 		count = frappe.get_all('Payment Entry', filters=filter_condition, fields=['count(*) as count'])[0]['count']
 		count += 1
 		padded_number = str(count).zfill(3)
-		self.custom_series = f'PE-{y}-{m}-{d}-{padded_number}'
+		self.custom_series = f'PI-{y}-{m}-{d}-{padded_number}'
 
 	def invoice_is_blocked(self):
 		return self.on_hold and (not self.release_date or self.release_date > getdate(nowdate()))
