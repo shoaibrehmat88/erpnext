@@ -78,6 +78,16 @@ class PurchaseInvoice(BuyingController):
 	def before_save(self):
 		if not self.on_hold:
 			self.release_date = ""
+		from datetime import datetime
+		current_datetime = datetime.now()
+		d = current_datetime.strftime('%d')
+		m = current_datetime.strftime('%m')
+		y = current_datetime.strftime('%y')
+		filter_condition = {'company': self.company, 'creation':current_datetime.strftime('%Y-%m-%d')}
+		count = frappe.get_all('Payment Entry', filters=filter_condition, fields=['count(*) as count'])[0]['count']
+		count += 1
+		padded_number = str(count).zfill(3)
+		self.custom_series = f'PE-{y}-{m}-{d}-{padded_number}'
 
 	def invoice_is_blocked(self):
 		return self.on_hold and (not self.release_date or self.release_date > getdate(nowdate()))
