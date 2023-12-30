@@ -95,8 +95,11 @@ class PaymentEntry(AccountsController):
 		d = current_datetime.strftime('%d')
 		m = current_datetime.strftime('%m')
 		y = current_datetime.strftime('%y')
-		filter_condition = {'company': self.company, 'creation':current_datetime.strftime('%Y-%m-%d')}
-		count = frappe.get_all('Payment Entry', filters=filter_condition, fields=['count(*) as count'])[0]['count']
+		count = frappe.db.sql(f"""SELECT COUNT(name) FROM `tabPayment Entry` WHERE company = '{self.company}' and date(creation) = '{current_datetime.strftime("%Y-%m-%d")}'""",debug=True)
+		if count:
+			count = count[0][0]
+		else:
+			count = 0
 		count += 1
 		padded_number = str(count).zfill(3)
 		self.custom_series = f'PE-{y}-{m}-{d}-{padded_number}'
