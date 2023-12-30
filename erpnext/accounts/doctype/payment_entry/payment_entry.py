@@ -95,7 +95,7 @@ class PaymentEntry(AccountsController):
 		d = current_datetime.strftime('%d')
 		m = current_datetime.strftime('%m')
 		y = current_datetime.strftime('%y')
-		count = frappe.db.sql(f"""SELECT COUNT(name) FROM `tabPayment Entry` WHERE company = '{self.company}' and date(creation) = '{current_datetime.strftime("%Y-%m-%d")}'""",debug=True)
+		count = frappe.db.sql(f"""SELECT COUNT(name) FROM `tabPayment Entry` WHERE company = '{self.company}' and date(creation) = '{current_datetime.strftime("%Y-%m-%d")}'""")
 		if count:
 			count = count[0][0]
 		else:
