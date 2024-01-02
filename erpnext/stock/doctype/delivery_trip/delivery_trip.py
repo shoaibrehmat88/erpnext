@@ -17,22 +17,16 @@ class DeliveryTrip(Document):
 
 	def postex_api_call(self):
 		#postex api call
+		from postex.utils import send_request
+		import json
 		for dn in self.delivery_stops:
-			import requests
-			import json
-			site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
-			url = site_url+"/services/oms/api/wms/status/update"
+			url = "/services/oms/api/wms/status/update"
 			payload = json.dumps({
 				"cnNumber": dn.custom_cn,
 				"orderStatus": self.workflow_state,
 				"updatedDateTime": frappe.utils.nowdate()
 			})
-			headers = {
-				'Content-Type': 'application/json',
-				'Accept': '*/*'
-			}
-			response = requests.request("POST", url, headers=headers, data=payload)
-			print(response.text)
+			send_request(url,payload)
 
 	def __init__(self, *args, **kwargs):
 		super(DeliveryTrip, self).__init__(*args, **kwargs)

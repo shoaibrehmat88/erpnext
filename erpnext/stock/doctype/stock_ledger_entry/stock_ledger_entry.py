@@ -140,25 +140,18 @@ class StockLedgerEntry(Document):
 					_mr = False
 		
 			if _mr == True:
-				import requests
-				import json
 				qty = self.actual_qty
 				if stock_entry_type == 'Damage':
 					qty = -1 * qty
-				site_url = frappe.db.get_value('Postex Config',{'key':'api_url'},'value')
-				url = site_url+"/services/oms/api/wms/product/quanity/update"
+				from postex.utils import send_request
+				import json
+				url = "/services/oms/api/wms/product/quanity/update"
 				payload = json.dumps({
 					"locationReference": warehouse.get('custom_oms_location'),
 					"productReference": self.item_code,
 					"quantity": qty
 				})
-				headers = {
-					'Content-Type': 'application/json',
-					'Accept': '*/*'
-				}
-				response = requests.request("POST", url, headers=headers, data=payload)
-				print(response.text)
-
+				send_request(url,payload)
 
 	def calculate_batch_qty(self):
 		if self.batch_no:
