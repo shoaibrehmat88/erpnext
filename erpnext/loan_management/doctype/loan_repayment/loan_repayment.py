@@ -595,9 +595,15 @@ def regenerate_repayment_schedule(loan, cancel=0):
 	balance_amount = get_pending_principal_amount(loan_doc)
 
 	if loan_doc.repayment_method == "Repay Fixed Amount per Period":
-		monthly_repayment_amount = flt(
-			balance_amount / len(loan_doc.get("repayment_schedule")) - accrued_entries
-		)
+		if len(loan_doc.get("repayment_schedule")) == 0:
+			monthly_repayment_amount = flt(
+				balance_amount / loan_doc.get('repayment_periods') - accrued_entries
+			)			
+		else:
+			monthly_repayment_amount = flt(
+				balance_amount / len(loan_doc.get("repayment_schedule")) - accrued_entries
+			)
+
 	else:
 		repayment_period = loan_doc.repayment_periods - accrued_entries
 		if not cancel and repayment_period > 0:
