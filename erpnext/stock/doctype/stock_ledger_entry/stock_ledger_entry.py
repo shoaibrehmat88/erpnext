@@ -57,6 +57,7 @@ class StockLedgerEntry(Document):
 			from erpnext.stock.doctype.serial_no.serial_no import process_serial_no
 
 			process_serial_no(self)
+		frappe.enqueue(stock_ledger_entry_qty_stock_queue_and_value, sle_name=self.name,warehouse=self.warehouse,item_code=self.item_code,created_on=self.creation, queue="short", enqueue_after_commit=True)
 
 	def calculate_batch_qty(self):
 		if self.batch_no:
@@ -227,3 +228,18 @@ def on_doctype_update():
 	frappe.db.add_index("Stock Ledger Entry", ["voucher_no", "voucher_type"])
 	frappe.db.add_index("Stock Ledger Entry", ["batch_no", "item_code", "warehouse"])
 	frappe.db.add_index("Stock Ledger Entry", ["warehouse", "item_code"], "item_warehouse")
+
+
+def stock_ledger_entry_qty_stock_queue_and_value(sle_name,warehouse,item_code,created_on):
+	print(f'called {sle_name} {warehouse}')
+	from time import sleep
+	sleep(1)
+	stock_ledger_update = frappe.db.sql(f"""SELECT sum(actual_qty) as qty_after_transaction , valuation_rate 
+	FROM `tabStock Ledger Entry` 
+	WHERE warehouse = '{warehouse}' AND item_code = '{item_code}' AND creation <= '{created_on}' """,as_dict=True)
+	
+	if stock_ledger_update[0]['qty_after_transaction']:	
+		frappe.db.sql(f"""UPDATE `tabStock Ledger Entry` SET qty_after_transaction = '{stock_ledger_update[0]['qty_after_transaction']}', stock_value = '{stock_ledger_update[0]['qty_after_transaction'] * stock_ledger_update[0]['valuation_rate']}' WHERE NAME = '{sle_name}';""")
+		frappe.db.sql(f"""UPDATE `tabBin` SET actual_qty = '{stock_ledger_update[0]['qty_after_transaction']}' WHERE item_code = '{item_code}' AND warehouse = '{warehouse}';""")
+
+	frappe.db.commit()
