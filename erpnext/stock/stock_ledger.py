@@ -484,7 +484,7 @@ class update_entries_after(object):
 				)
 			order by
 				creation ASC
-			for update
+			
 		""",
 			self.args,
 			as_dict=1,
@@ -1176,7 +1176,7 @@ def get_previous_sle_of_current_voucher(args, operator="<", exclude_current_vouc
 			)
 		order by timestamp(posting_date, posting_time) desc, creation desc
 		limit 1
-		for update""".format(
+		""".format(
 			operator=operator, voucher_condition=voucher_condition
 		),
 		args,
@@ -1262,7 +1262,7 @@ def get_stock_ledger_entries(
 		% {
 			"conditions": conditions,
 			"limit": limit or "",
-			"for_update": for_update and "for update" or "",
+			"for_update": for_update and "" or "",
 			"order": order,
 		},
 		previous_sle,

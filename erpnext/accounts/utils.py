@@ -1297,7 +1297,7 @@ def get_future_stock_vouchers(
 			timestamp(sle.posting_date, sle.posting_time) >= timestamp(%s, %s)
 			and is_cancelled = 0
 			{condition}
-		order by timestamp(sle.posting_date, sle.posting_time) asc, creation asc for update""".format(
+		order by timestamp(sle.posting_date, sle.posting_time) asc, creation asc""".format(
 			condition=condition
 		),
 		tuple([posting_date, posting_time] + values),
