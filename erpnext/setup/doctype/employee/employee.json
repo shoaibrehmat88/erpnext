@@ -24,6 +24,7 @@
   "gender",
   "date_of_birth",
   "salutation",
+  "father_name",
   "column_break1",
   "date_of_joining",
   "image",
@@ -831,13 +832,18 @@
    "label": "CNIC",
    "length": 15,
    "reqd": 1
+  },
+  {
+   "fieldname": "father_name",
+   "fieldtype": "Data",
+   "label": "Father Name"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
  "links": [],
- "modified": "2023-12-12 12:57:05.785315",
+ "modified": "2024-01-30 13:45:27.263462",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",

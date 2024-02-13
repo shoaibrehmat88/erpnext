@@ -9,6 +9,7 @@
  "field_order": [
   "type_of_payment",
   "naming_series",
+  "custom_series",
   "payment_type",
   "payment_order_status",
   "column_break_5",
@@ -735,12 +736,18 @@
    "fieldname": "get_outstanding_orders",
    "fieldtype": "Button",
    "label": "Get Outstanding Orders"
+  },
+  {
+   "fieldname": "custom_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Custom Series"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-19 11:38:04.387219",
+ "modified": "2023-12-30 20:53:44.296557",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
