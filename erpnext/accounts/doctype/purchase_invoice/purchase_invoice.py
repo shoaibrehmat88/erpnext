@@ -377,11 +377,13 @@ class PurchaseInvoice(BuyingController):
 					asset_received_but_not_billed = self.get_company_default("asset_received_but_not_billed")
 				item.expense_account = asset_received_but_not_billed
 			elif not item.expense_account and for_validate:
-				throw(_("Expense account is mandatory for item {0}").format(item.item_code or item.item_name))
+				expense_account = frappe.db.get_value('Company',self.company,"stock_received_but_not_billed")
+				item.expense_account = expense_account
+				# throw(_("Expense account is mandatory for item {0}").format(item.item_code or item.item_name))
 
 	def validate_expense_account(self):
 		for item in self.get("items"):
-			if item.purchase_receipt != '':
+			if item.purchase_receipt:
 				expense_account = frappe.db.get_value('Company',self.company,"stock_received_but_not_billed")
 				item.expense_account = expense_account
 
