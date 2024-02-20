@@ -381,6 +381,10 @@ class PurchaseInvoice(BuyingController):
 
 	def validate_expense_account(self):
 		for item in self.get("items"):
+			if item.purchase_receipt != '':
+				expense_account = frappe.db.get_value('Company',self.company,"stock_received_but_not_billed")
+				item.expense_account = expense_account
+
 			validate_account_head(item.idx, item.expense_account, self.company, "Expense")
 
 	def set_against_expense_account(self):
