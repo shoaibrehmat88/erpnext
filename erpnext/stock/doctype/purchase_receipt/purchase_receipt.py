@@ -1032,7 +1032,8 @@ def make_purchase_invoice(source_name, target_doc=None):
 	target_d.qty = 1
 	target_d.rate = pr.total
 	target_d.purchase_receipt = pr.name
-	target_d.expense_account = '22101 - Stock Received But Not Billed - CP'
+	expense_account = frappe.db.get_value('Company',pr.company,"stock_received_but_not_billed")
+	target_d.expense_account = expense_account
 	target_doc.append("items", target_d)
 	target_doc.total = pr.total
 	target_doc.total_qty = 1
