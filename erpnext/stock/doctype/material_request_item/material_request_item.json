@@ -18,7 +18,9 @@
   "brand",
   "image",
   "quantity_and_warehouse",
+  "required_quantity",
   "qty",
+  "pack_quantity",
   "stock_uom",
   "from_warehouse",
   "warehouse",
@@ -64,12 +66,12 @@
  "fields": [
   {
    "bold": 1,
-   "columns": 3,
+   "columns": 1,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_list_view": 1,
-   "label": "Item Code",
+   "label": "SKU",
    "oldfieldname": "item_code",
    "oldfieldtype": "Link",
    "options": "Item",
@@ -83,10 +85,12 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 3,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "Item Name",
+   "in_list_view": 1,
+   "label": "Product Name",
    "oldfieldname": "item_name",
    "oldfieldtype": "Data",
    "print_hide": 1,
@@ -127,7 +131,7 @@
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Quantity",
+   "label": "Pick Quantity",
    "oldfieldname": "qty",
    "oldfieldtype": "Currency",
    "print_width": "80px",
@@ -138,13 +142,11 @@
    "columns": 1,
    "fieldname": "uom",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "UOM",
    "oldfieldname": "uom",
    "oldfieldtype": "Link",
    "options": "UOM",
    "print_width": "70px",
-   "reqd": 1,
    "width": "70px"
   },
   {
@@ -181,16 +183,13 @@
   },
   {
    "allow_on_submit": 1,
-   "bold": 1,
    "columns": 2,
    "fieldname": "schedule_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Required By",
    "oldfieldname": "schedule_date",
    "oldfieldtype": "Date",
    "print_width": "100px",
-   "reqd": 1,
    "width": "100px"
   },
   {
@@ -473,13 +472,28 @@
    "fieldtype": "Link",
    "label": "WIP Composite Asset",
    "options": "Asset"
+  },
+  {
+   "columns": 1,
+   "fieldname": "required_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Required Quantity",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "pack_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Pack Quantity"
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-27 15:53:41.444236",
+ "modified": "2024-02-20 17:14:33.329117",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

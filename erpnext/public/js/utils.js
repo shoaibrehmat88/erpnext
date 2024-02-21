@@ -763,6 +763,7 @@ erpnext.utils.map_current_doc = function(opts) {
 			doctype: opts.source_doctype,
 			target: opts.target,
 			date_field: opts.date_field || undefined,
+			columns:opts.columns || undefined,
 			setters: opts.setters,
 			get_query: opts.get_query,
 			add_filters_group: 1,

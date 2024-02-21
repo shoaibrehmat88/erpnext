@@ -125,6 +125,11 @@ class MaterialRequest(BuyingController):
 		self.update_requested_qty()
 		if self.material_request_type == "Purchase":
 			self.validate_budget()
+		#Postex
+		dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
+		frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""",debug=True)
+		frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
+		frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
 
 	def before_save(self):
 		self.set_status(update=True)

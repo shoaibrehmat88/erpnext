@@ -569,64 +569,43 @@ def get_requested_item_qty(sales_order):
 
 @frappe.whitelist()
 def make_material_request(source_name, target_doc=None):
-	requested_item_qty = get_requested_item_qty(source_name)
-
-	def get_remaining_qty(so_item):
-		return flt(
-			flt(so_item.qty)
-			- flt(requested_item_qty.get(so_item.name, {}).get("qty"))
-			- max(
-				flt(so_item.get("delivered_qty"))
-				- flt(requested_item_qty.get(so_item.name, {}).get("received_qty")),
-				0,
-			)
-		)
-
-	def update_item(source, target, source_parent):
-		# qty is for packed items, because packed items don't have stock_qty field
-		target.project = source_parent.project
-		target.qty = get_remaining_qty(source)
-		target.stock_qty = flt(target.qty) * flt(target.conversion_factor)
-
-		args = target.as_dict().copy()
-		args.update(
-			{
-				"company": source_parent.get("company"),
-				"price_list": frappe.db.get_single_value("Buying Settings", "buying_price_list"),
-				"currency": source_parent.get("currency"),
-				"conversion_rate": source_parent.get("conversion_rate"),
-			}
-		)
-
-		target.rate = flt(
-			get_price_list_rate(args=args, item_doc=frappe.get_cached_doc("Item", target.item_code)).get(
-				"price_list_rate"
-			)
-		)
-		target.amount = target.qty * target.rate
-
-	doc = get_mapped_doc(
-		"Sales Order",
-		source_name,
-		{
-			"Sales Order": {"doctype": "Material Request", "validation": {"docstatus": ["=", 1]}},
-			"Packed Item": {
-				"doctype": "Material Request Item",
-				"field_map": {"parent": "sales_order", "uom": "stock_uom"},
-				"postprocess": update_item,
-			},
-			"Sales Order Item": {
-				"doctype": "Material Request Item",
-				"field_map": {"name": "sales_order_item", "parent": "sales_order"},
-				"condition": lambda item: not frappe.db.exists("Product Bundle", item.item_code)
-				and get_remaining_qty(item) > 0,
-				"postprocess": update_item,
-			},
-		},
-		target_doc,
-	)
-
-	return doc
+	if isinstance(target_doc,str):
+		target_doc = frappe.get_doc(json.loads(target_doc))
+	dn = frappe.get_doc('Delivery Note', source_name)
+	frappe.db.set_value('Delivery Note',source_name,'custom_dn_selected',1)
+	frappe.db.commit()
+	i_c = []
+	d_c = []
+	for md in target_doc.dn_mr_item:
+		d_c.append(md.against)
+	if dn.name in d_c:
+		return target_doc
+	for mi in target_doc.items:
+		i_c.append(mi.item_code)
+	for i in dn.items:
+		if i.item_code in i_c:
+			for mi in target_doc.items:
+				if mi.item_code == i.item_code:
+					mi.qty += i.qty
+		else:
+			target_d = frappe.new_doc("Material Request Item", target_doc, "items")
+			target_d.item_code = i.item_code
+			target_d.item_name = i.item_name
+			target_d.required_quantity = i.qty
+			target_d.qty = 0
+			target_d.description = i.description
+			target_d.uom = i.uom
+			target_d.conversion_factor = i.conversion_factor
+			target_d.schedule_date = target_doc.transaction_date
+			target_doc.append("items", target_d)
+		nc = frappe.new_doc("MR DN Item", target_doc, "dn_mr_item")
+		nc.against = dn.name
+		nc.sku = i.item_code
+		nc.product_name = i.item_name
+		nc.qauntity = i.qty
+		target_doc.append("dn_mr_item",nc)
+	
+	return target_doc
 
 
 @frappe.whitelist()
