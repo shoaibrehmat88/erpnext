@@ -18,6 +18,8 @@
   "transaction_date",
   "schedule_date",
   "picking_bin",
+  "accepted_warehouse",
+  "rejected_warehouse",
   "amended_from",
   "warehouse_section",
   "scan_barcode",
@@ -28,6 +30,7 @@
   "items_section",
   "items",
   "dn_mr_item",
+  "mr_se_item",
   "terms_tab",
   "terms_section_break",
   "tc_name",
@@ -47,6 +50,7 @@
   "job_card",
   "column_break_35",
   "work_order",
+  "workflow_state",
   "connections_tab"
  ],
  "fields": [
@@ -287,7 +291,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "in_list_view": 1,
-   "label": "Packing Warehouse",
+   "label": "Packing Location",
    "options": "Warehouse"
   },
   {
@@ -334,6 +338,7 @@
   {
    "fieldname": "connections_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Connections",
    "show_dashboard": 1
   },
@@ -361,8 +366,7 @@
    "fieldname": "picking_bin",
    "fieldtype": "Link",
    "label": "Picking Bin",
-   "options": "Picking Bin",
-   "reqd": 1
+   "options": "Picking Bin"
   },
   {
    "default": "Pick List Request",
@@ -377,13 +381,37 @@
    "label": "DN MR Item",
    "options": "MR DN Item",
    "read_only": 1
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "label": "Workflow State"
+  },
+  {
+   "fieldname": "mr_se_item",
+   "fieldtype": "Table",
+   "label": "MR SE Item",
+   "options": "MR SE Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accepted_warehouse",
+   "fieldtype": "Link",
+   "label": "Accepted Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "rejected_warehouse",
+   "fieldtype": "Link",
+   "label": "Rejected Warehouse",
+   "options": "Warehouse"
   }
  ],
  "icon": "fa fa-ticket",
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-20 15:51:55.756874",
+ "modified": "2024-02-26 14:37:58.073301",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",

@@ -126,22 +126,38 @@ class MaterialRequest(BuyingController):
 		if self.material_request_type == "Purchase":
 			self.validate_budget()
 		#Postex
-		dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
-		frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""",debug=True)
-		frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
-		frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
-
+		if self.type == 'Pick List Request':
+			dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
+			frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
+			frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
+			frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
+			se = make_stock_entry(self.name)
+			se.save(ignore_permissions=True)
+			se.submit()
+		elif self.type == 'Put Away GRN':
+			se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
+			for i in self.items:
+				frappe.db.sql(f"""UPDATE `tabStock Entry Detail` set t_warehouse = '{i.from_warehouse}' WHERE item_code = '{i.item_code}' and parent in ({se})""",auto_commit=True)
+			for s in self.mr_se_item:
+				d = frappe.get_doc('Stock Entry',s.against)
+				d.submit()
 	def before_save(self):
-		self.set_status(update=True)
+		if self.workflow_state == None or self.workflow_state != 'To Pack':
+			if self.type == 'Pick List Request':
+				self.workflow_state = 'To Pick'
+			elif self.type == 'Put Away GRN':
+				self.workflow_state = 'Draft'
+				# self.naming_series = 'MAT-DN-RET-.YYYY.-'
+		# self.set_status(update=True)
 
-	def before_submit(self):
-		self.set_status(update=True)
+	# def before_submit(self):
+		# self.set_status(update=True)
 
 	def before_cancel(self):
 		# if MRQ is already closed, no point saving the document
 		check_on_hold_or_closed_status(self.doctype, self.name)
 
-		self.set_status(update=True, status="Cancelled")
+		# self.set_status(update=True, status="Cancelled")
 
 	def check_modified_date(self):
 		mod_db = frappe.db.sql(
@@ -604,7 +620,7 @@ def make_stock_entry(source_name, target_doc=None):
 		target.qty = qty
 		target.transfer_qty = qty * obj.conversion_factor
 		target.conversion_factor = obj.conversion_factor
-
+		target.allow_zero_valuation_rate = 1
 		if (
 			source_parent.material_request_type == "Material Transfer"
 			or source_parent.material_request_type == "Customer Provided"
@@ -664,6 +680,7 @@ def make_stock_entry(source_name, target_doc=None):
 					"parent": "material_request",
 					"uom": "stock_uom",
 					"job_card_item": "job_card_item",
+					1:"allow_zero_valuation_rate"
 				},
 				"postprocess": update_item,
 				"condition": lambda doc: (

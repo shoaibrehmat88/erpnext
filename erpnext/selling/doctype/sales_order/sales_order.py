@@ -586,7 +586,7 @@ def make_material_request(source_name, target_doc=None):
 		if i.item_code in i_c:
 			for mi in target_doc.items:
 				if mi.item_code == i.item_code:
-					mi.qty += i.qty
+					mi.required_quantity += i.qty
 		else:
 			target_d = frappe.new_doc("Material Request Item", target_doc, "items")
 			target_d.item_code = i.item_code
@@ -604,6 +604,45 @@ def make_material_request(source_name, target_doc=None):
 		nc.product_name = i.item_name
 		nc.qauntity = i.qty
 		target_doc.append("dn_mr_item",nc)
+	
+	return target_doc
+
+@frappe.whitelist()
+def make_grn_material_request(source_name, target_doc=None):
+	if isinstance(target_doc,str):
+		target_doc = frappe.get_doc(json.loads(target_doc))
+	se = frappe.get_doc('Stock Entry', source_name)
+	frappe.db.set_value('Stock Entry',source_name,'custom_se_selected',1)
+	frappe.db.commit()
+	i_c = []
+	d_c = []
+	for md in target_doc.dn_mr_item:
+		d_c.append(md.against)
+	if se.name in d_c:
+		return target_doc
+	for mi in target_doc.items:
+		i_c.append(mi.item_code)
+	for i in se.items:
+		if i.item_code in i_c:
+			for mi in target_doc.items:
+				if mi.item_code == i.item_code:
+					mi.qty += i.qty
+		else:
+			target_d = frappe.new_doc("Material Request Item", target_doc, "items")
+			target_d.item_code = i.item_code
+			target_d.item_name = i.item_name
+			target_d.qty = i.qty
+			target_d.description = i.description
+			target_d.uom = i.uom
+			target_d.conversion_factor = i.conversion_factor
+			target_d.schedule_date = target_doc.transaction_date
+			target_doc.append("items", target_d)
+		nc = frappe.new_doc("MR SE Item", target_doc, "mr_se_item")
+		nc.against = se.name
+		nc.sku = i.item_code
+		nc.product_name = i.item_name
+		nc.quantity = i.qty
+		target_doc.append("mr_se_item",nc)
 	
 	return target_doc
 
