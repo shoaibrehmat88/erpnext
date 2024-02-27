@@ -26,7 +26,8 @@ class DeliveryNote(SellingController):
 			else:
 				self.workflow_state = 'To Return'
 				self.naming_series = 'MAT-DN-RET-.YYYY.-'
-		self.postex_api_call()
+		if self.workflow_state != 'To Pick':
+			self.postex_api_call()
 	
 	def postex_api_call(self):
 		#postex api call
