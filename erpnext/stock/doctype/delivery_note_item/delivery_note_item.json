@@ -102,7 +102,9 @@
   "dimension_col_break",
   "project",
   "section_break_72",
-  "page_break"
+  "page_break",
+  "a_warehouse",
+  "r_warehouse"
  ],
  "fields": [
   {
@@ -869,13 +871,26 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Pack Quantity"
+  },
+  {
+   "fieldname": "a_warehouse",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "A Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "r_warehouse",
+   "fieldtype": "Link",
+   "label": "R Warehouse",
+   "options": "Warehouse"
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-20 14:41:16.765409",
+ "modified": "2024-03-05 16:58:49.846838",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note Item",

@@ -141,12 +141,23 @@ class MaterialRequest(BuyingController):
 			for s in self.mr_se_item:
 				d = frappe.get_doc('Stock Entry',s.against)
 				d.submit()
+		elif self.type == 'Put Away Return':
+			for i in self.items:
+				if i.split_wise == 1:
+					data = json.loads(i.split_data)
+					for d in data:
+						frappe.db.sql(f"""UPDATE `tabDelivery Note Return Item` set accepted_quantity = '{d.get('a_qty')}', rejected_quantity = '{d.get('r_qty')}', short_quantity = '{d.get('s_qty')}', a_warehouse = '{i.from_warehouse}', r_warehouse = '{self.set_warehouse}' WHERE sku = '{i.item_code}' and parent = '{d.get('parent')}'""",auto_commit=True)
+			for d in self.dn_mr_item:
+				dn = frappe.get_doc('Delivery Note',d.against)
+				dn.submit()
 	def before_save(self):
-		if self.workflow_state == None or self.workflow_state != 'To Pack':
-			if self.type == 'Pick List Request':
+		if self.workflow_state == None or self.workflow_state == 'To Pick':
+			if self.type == 'Pick List Request' and self.workflow_state != 'To Pack':
 				self.workflow_state = 'To Pick'
-			elif self.type == 'Put Away GRN':
+			elif self.type == 'Put Away GRN' and self.workflow_state != 'Approved' :
 				self.workflow_state = 'Draft'
+			elif self.type == 'Put Away Return' and self.workflow_state != 'Quality Check' :
+				self.workflow_state = 'Received'
 				# self.naming_series = 'MAT-DN-RET-.YYYY.-'
 		# self.set_status(update=True)
 

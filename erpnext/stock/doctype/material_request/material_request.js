@@ -24,20 +24,57 @@ frappe.ui.form.on('Material Request', {
 					var item_code = r.message;
 					frm.doc.items.forEach(function(d){
 						if (d.item_code == item_code){
-							if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){
-								if(d.qty < (d.pack_quantity + 1)){
-									frm.doc.custom_scan_barcode = '';
-									frm.refresh_field('custom_scan_barcode');
-									frappe.throw("You cannot add item more then pick quantity");
+							if(frm.doc.type == 'Put Away Return'){
+								console.log(frm.doc.__islocal)
+								// if(frm.doc.__islocal != undefined){
+									if(d.required_quantity > (d.qty - 1)){
+										frm.doc.custom_scan_barcode = '';
+										frm.refresh_field('custom_scan_barcode');
+										frappe.throw("You cannot add item more then total quantity");
+									}
+									d.qty -= 1;
+								// }else{
+								// 	if(d.qty > (d.pack_quantity - 1)){
+								// 		frm.doc.custom_scan_barcode = '';
+								// 		frm.refresh_field('custom_scan_barcode');
+								// 		frappe.throw("You cannot add item more then accepted quantity");
+								// 	}
+								// 	d.pack_quantity -= 1;
+								// }
+							}else if(frm.doc.type == 'Pick List Request'){
+								if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){								
+									if(d.qty < (d.pack_quantity + 1)){
+										frm.doc.custom_scan_barcode = '';
+										frm.refresh_field('custom_scan_barcode');
+										frappe.throw("You cannot add item more then pick quantity");
+									}
+									d.pack_quantity += 1;
+								}else{
+									if(d.required_quantity < (d.qty + 1)){
+										frm.doc.custom_scan_barcode = '';
+										frm.refresh_field('custom_scan_barcode');
+										frappe.throw("You cannot add item more then required quantity");
+									}
+									d.qty += 1;
 								}
-								d.pack_quantity += 1;
-							}else{
-								if(d.required_quantity < (d.qty + 1)){
-									frm.doc.custom_scan_barcode = '';
-									frm.refresh_field('custom_scan_barcode');
-									frappe.throw("You cannot add item more then required quantity");
+	
+							}else if(frm.doc.type == 'Put Away GRN'){
+								if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){								
+									if(d.qty < (d.pack_quantity + 1)){
+										frm.doc.custom_scan_barcode = '';
+										frm.refresh_field('custom_scan_barcode');
+										frappe.throw("You cannot add item more then quantity");
+									}
+									d.pack_quantity += 1;
+								// }else{
+								// 	if(d.required_quantity < (d.qty + 1)){
+								// 		frm.doc.custom_scan_barcode = '';
+								// 		frm.refresh_field('custom_scan_barcode');
+								// 		frappe.throw("You cannot add item more then required quantity");
+								// 	}
+								// 	d.qty += 1;
 								}
-								d.qty += 1;
+	
 							}
 							frm.refresh_field('items');
 							frm.doc.custom_scan_barcode = '';
@@ -329,6 +366,32 @@ frappe.ui.form.on('Material Request', {
 			}
 		});
 	},
+	get_items_from_gdn_return: function(frm) {
+		if (frm.doc.custom_location == "" || frm.doc.custom_location == undefined){
+			frappe.throw("Please select location first!");
+		}
+		erpnext.utils.map_current_doc({
+			method: "erpnext.selling.doctype.sales_order.sales_order.make_gdn_return_material_request",
+			source_doctype: "Delivery Note",
+			target: frm,
+			setters: {
+				custom_cn: undefined,
+				// custom_location: undefined,
+			},
+			columns:["name","custom_cn","custom_location"],
+			get_query_filters: {
+				docstatus: 0,
+				// status: ["not in", ["Closed", "On Hold"]],
+				// per_delivered: ["<", 99.99],			
+				custom_against_mr:["is","not set"],
+				custom_dn_selected:0,
+				workflow_state:'To Return',
+				is_return:1,
+				company: frm.doc.company,
+				custom_location : frm.doc.custom_location
+			}
+		});
+	},
 
 	get_item_data: function(frm, item, overwrite_warehouse=false) {
 		if (item && !item.item_code) { return; }
@@ -543,13 +606,147 @@ frappe.ui.form.on('Material Request', {
 });
 
 frappe.ui.form.on("Material Request Item", {
-	qty: function (frm, doctype, name) {
-		const item = locals[doctype][name];
-		if (flt(item.qty) < flt(item.min_order_qty)) {
-			frappe.msgprint(__("Warning: Material Requested Qty is less than Minimum Order Qty"));
-		}
-		frm.events.get_item_data(frm, item, false);
-	},
+	split: function (frm,cdt,cdn){
+		var row = locals[cdt][cdn];
+		var _cns = row.split_data || "[]";
+		let child_data = JSON.parse(_cns);
+		let lst = [];
+		child_data.forEach((d) => {
+			let qty = parseInt(d.qty)
+			let a_qty = parseInt(d.a_qty)
+			let r_qty = parseInt(d.r_qty)
+			let s_qty = parseInt(d.s_qty)
+			lst.push({"cn": d.cn, "qty": qty, "a_qty": a_qty,"r_qty":r_qty,"s_qty":s_qty,"parent":d.parent})
+		});
+		_cns = lst;
+		let dialog = new frappe.ui.Dialog({
+			title: __('Allocate Qty CN Wise'),
+			fields: [
+				{
+					fieldtype: 'Data',
+					fieldname: 'item',
+					 label: __('Item'),
+					read_only: 1,
+					default: row.item_code + ":" + row.item_name
+				},
+				{ fieldtype: "Column Break" },
+				{
+					fieldtype: 'Float',
+					fieldname: 'qty',
+					label: __('Qty'),
+					default: row.required_quantity,
+					read_only: 1
+				},
+				{ fieldtype: "Section Break" },
+				{
+					fieldname: 'split_data',
+					cannot_add_rows: true,
+					fieldtype: 'Table',
+					label: __('CN#'),
+					in_editable_grid: true,
+					reqd: 1,
+					fields: [
+					// {
+					// 	fieldtype: 'Link',
+					// 	fieldname: 'warehouse',
+					// 	options: 'Warehouse',
+					// 	in_list_view: 1,
+					// 	label: __('Warehouse'),
+					// 	columns: 4,
+					// 	get_query: () => {
+					// 		return {
+					// 			filters: {
+					// 				"is_group": 0
+					// 			}
+					// 		};
+					// 	}
+					// }, {
+					{
+						fieldtype: 'Read Only',
+						fieldname: 'cn',
+						label: __('CN'),
+						in_list_view: 1,
+						columns: 2
+					}, {
+						fieldtype: 'Read Only',
+						fieldname: 'qty',
+						label: __('Qty'),
+						in_list_view: 1,
+						columns: 2
+					}, {
+						fieldtype: 'Float',
+						fieldname: 'a_qty',
+						label: __('Accpeted Qty'),
+						in_list_view: 1,
+						reqd: 1,
+						default: 0,
+						columns: 2
+					}, {
+						fieldtype: 'Float',
+						fieldname: 'r_qty',
+						label: __('Rejected Qty'),
+						in_list_view: 1,
+						reqd: 1,
+						default: 0,
+						columns: 2
+					}, {
+						fieldtype: 'Float',
+						fieldname: 's_qty',
+						label: __('Short Qty'),
+						in_list_view: 1,
+						reqd: 1,
+						default: 0,
+						columns: 2
+					}, {
+						fieldtype: 'Data',
+						fieldname: 'parent',
+						label: __('Parent'),
+						in_list_view: 0,
+						reqd: 1
+					}],
+					data: _cns
+				},
+			],
+			primary_action_label: __('Save'),
+			primary_action: function(values) {
+				let child_data = values.split_data;
+				let a_qty = 0;
+				let r_qty = 0;
+				let s_qty = 0;
+				let lst = []
+				child_data.forEach((d) => {
+					a_qty += parseInt(d.a_qty);
+					r_qty += parseInt(d.r_qty);
+					s_qty += parseInt(d.s_qty);
+					let total_qty = parseInt(d.qty)
+					if (total_qty != (parseInt(d.a_qty) + parseInt(d.r_qty) + parseInt(d.s_qty))){
+						frappe.throw('Sum of accepted, rejected and short must be equal to total qty, CN#'+d.cn);
+					}
+					lst.push({"cn": d.cn, "qty": parseInt(d.qty), "a_qty": parseInt(d.a_qty),"r_qty":parseInt(d.r_qty),"s_qty":parseInt(d.s_qty),"parent":d.parent})
+				});
+				dialog.hide();
+				frappe.model.set_value(cdt,cdn,"split_data",JSON.stringify(lst));
+				frappe.model.set_value(cdt,cdn,"qty",a_qty);
+				frappe.model.set_value(cdt,cdn,"pack_quantity",r_qty);
+				frappe.model.set_value(cdt,cdn,"short_quantity",s_qty);
+				frappe.model.set_value(cdt,cdn,"split_wise",1);
+				refresh_field("split_data", cdn, "items");
+				refresh_field("qty", cdn, "items");
+				refresh_field("pack_quantity", cdn, "items");
+				refresh_field("short_quantity", cdn, "items");
+				refresh_field("split_wise", cdn, "items");
+			}
+		});
+		dialog.show();
+	},	
+
+	// qty: function (frm, doctype, name) {
+	// 	const item = locals[doctype][name];
+	// 	if (flt(item.qty) < flt(item.min_order_qty)) {
+	// 		frappe.msgprint(__("Warning: Material Requested Qty is less than Minimum Order Qty"));
+	// 	}
+	// 	frm.events.get_item_data(frm, item, false);
+	// },
 
 	from_warehouse: function(frm, doctype, name) {
 		const item = locals[doctype][name];
@@ -663,40 +860,83 @@ function updateChildTable(frm){
 	if (frm.doc.type == 'Pick List Request'){
 		frm.set_df_property('set_warehouse','reqd',1);
 		frm.set_df_property('set_warehouse','hidden',0);
+		frm.set_df_property('set_warehouse','label','Packing Location');
 		frm.set_df_property('picking_bin','reqd',1);
 		frm.set_df_property('picking_bin','hidden',0);
-		frm.set_df_property('accepted_warehouse','reqd',0);
-		frm.set_df_property('accepted_warehouse','hidden',1);
-		frm.set_df_property('rejected_warehouse','reqd',0);
-		frm.set_df_property('rejected_warehouse','hidden',1);
+
 		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
+		frm.get_field('items').grid.update_docfield_property('from_warehouse','label','Bin');
+		frm.get_field('items').grid.toggle_display('required_quantity',1);
+		frm.get_field('items').grid.update_docfield_property('required_quantity','label','Required Quantity');
 		frm.get_field('items').grid.update_docfield_property('qty','label','Pick Quantity');
+		frm.get_field('items').grid.toggle_display('pack_quantity',1);
 		frm.get_field('items').grid.update_docfield_property('pack_quantity','label','Pack Quantity');
-		refresh_field('items');	
+		frm.get_field('items').grid.toggle_display('short_quantity',0);
+		frm.get_field('items').grid.reset_grid();
 		frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
 		__("Get Items From"));
 		frm.remove_custom_button(__('GRN'),__("Get Items From"));
+		frm.remove_custom_button(__('GDN Return'),__("Get Items From"));
+		frm.set_query("set_warehouse", function(doc){
+			return {
+				filters: {
+					company: doc.company,
+					parent_warehouse:['descendants of',doc.custom_location],
+					custom_packing_area:1
+
+				}
+			};
+		});
 
 	}else if(frm.doc.type == 'Put Away GRN'){
 		frm.set_df_property('set_warehouse','reqd',0);
 		frm.set_df_property('set_warehouse','hidden',1);
 		frm.set_df_property('picking_bin','reqd',0);
 		frm.set_df_property('picking_bin','hidden',1);
-		frm.set_df_property('accepted_warehouse','reqd',0);
-		frm.set_df_property('accepted_warehouse','hidden',1);
-		frm.set_df_property('rejected_warehouse','reqd',0);
-		frm.set_df_property('rejected_warehouse','hidden',1);
 		// Button
 		frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
 		__("Get Items From"));
 		frm.remove_custom_button(__('GDN'),__("Get Items From"));
+		frm.remove_custom_button(__('GDN Return'),__("Get Items From"));
 		frm.get_field('items').grid.update_docfield_property('qty','label','Qty');
 		frm.get_field('items').grid.toggle_display('required_quantity',0);
 		frm.get_field('items').grid.toggle_display('pack_quantity',0);
 		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
 		frm.get_field('items').grid.toggle_display('from_warehouse',1);
+		frm.get_field('items').grid.toggle_display('short_quantity',0);
 		frm.get_field('items').grid.update_docfield_property('from_warehouse','label','Target Location');
-		frm.get_field('items').grid.reset_grid();		
+		frm.get_field('items').grid.reset_grid();
+	}else if(frm.doc.type == 'Put Away Return'){
+		frm.set_df_property('picking_bin','reqd',0);
+		frm.set_df_property('picking_bin','hidden',1);
+		frm.set_df_property('set_warehouse','label','Rejected Location');
+		frm.set_df_property('set_warehouse','hidden',0);
+		// Button
+		frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
+		__("Get Items From"));
+		frm.remove_custom_button(__('GRN'),__("Get Items From"));
+		frm.remove_custom_button(__('GDN'),__("Get Items From"));
+
+		frm.get_field('items').grid.update_docfield_property('required_quantity','label','Total Quantity');
+		frm.get_field('items').grid.update_docfield_property('qty','label','Accepted Quantity');
+		frm.get_field('items').grid.update_docfield_property('pack_quantity','label','Rejected Quantity');
+		frm.get_field('items').grid.update_docfield_property('from_warehouse','label','Bin');
+		frm.get_field('items').grid.toggle_display('required_quantity',1);
+		frm.get_field('items').grid.toggle_display('short_quantity',1);
+		frm.get_field('items').grid.toggle_display('pack_quantity',1);
+		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
+		frm.get_field('items').grid.reset_grid();
+		frm.set_query("set_warehouse", function(doc){
+			return {
+				filters: {
+					company: doc.company,
+					parent_warehouse:['descendants of',doc.custom_location],
+					warehouse_type:'Return'
+				}
+			};
+		});
+
 	}
 
 }
+

@@ -286,11 +286,14 @@ class DeliveryNote(SellingController):
 			rn.custom_auto_return = 0
 			rn.save(ignore_permissions=True)
 		elif self.is_return == 1:
-			for i in self.delivery_note_item:
-				if i.total_quantity != (i.accepted_quantity + i.rejected_quantity + i.short_quantity):
-					frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")
-			# make_stock_return_doc('Stock Entry',self.name)
-			make_return_stock_entries(self)
+			if self.custom_dn_selected == 1:
+				make_return_stock_entries_bulk(self)
+			else:
+				for i in self.delivery_note_item:
+					if i.total_quantity != (i.accepted_quantity + i.rejected_quantity + i.short_quantity):
+						frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")
+				# make_stock_return_doc('Stock Entry',self.name)
+				make_return_stock_entries(self)
 		self.postex_api_call()
 
 	def on_cancel(self):
@@ -1127,3 +1130,54 @@ def make_return_stock_entries(dn):
 			})
 		rse.save()
 	
+def make_return_stock_entries_bulk(dn):
+	doclist = frappe.new_doc('Stock Entry')
+	doclist.stock_entry_type = 'Put Away Return'
+	doclist.company = dn.company
+	for i in dn.delivery_note_item:
+		if i.accepted_quantity > 0:
+			doclist.append("items",{
+				"item_code" : i.sku,
+				"s_warehouse" : i.warehouse,
+				"t_warehouse" : i.a_warehouse,
+				"qty" : i.accepted_quantity
+			})
+	if len(doclist.items) > 0:
+		doclist.save()
+		doclist.submit()
+		# rse = frappe.new_doc('Stock Entry')
+		# rse.stock_entry_type = 'Put Away Return'
+		# rse.company = dn.company
+		# for i in doclist.items:
+		# 	rse.append("items",{
+		# 		"item_code" : i.item_code,
+		# 		"s_warehouse" : i.t_warehouse,
+		# 		"t_warehouse" : i.s_warehouse,
+		# 		"qty" : i.qty
+		# 	})
+		# rse.save()
+	doclist = frappe.new_doc('Stock Entry')
+	doclist.stock_entry_type = 'Put Away Damage'
+	doclist.company = dn.company
+	for i in dn.delivery_note_item:
+		if i.rejected_quantity > 0:
+			doclist.append("items",{
+				"item_code" : i.sku,
+				"s_warehouse" : i.warehouse,
+				"t_warehouse" : i.r_warehouse,
+				"qty" : i.rejected_quantity
+			})
+	if len(doclist.items) > 0:
+		doclist.save()
+		doclist.submit()
+		# rse = frappe.new_doc('Stock Entry')
+		# rse.stock_entry_type = 'Put Away Damage'
+		# rse.company = dn.company
+		# for i in doclist.items:
+		# 	rse.append("items",{
+		# 		"item_code" : i.item_code,
+		# 		"s_warehouse" : i.t_warehouse,
+		# 		"t_warehouse" : i.s_warehouse,
+		# 		"qty" : i.qty
+		# 	})
+		# rse.save()

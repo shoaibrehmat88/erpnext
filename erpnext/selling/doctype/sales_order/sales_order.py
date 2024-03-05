@@ -646,6 +646,51 @@ def make_grn_material_request(source_name, target_doc=None):
 	
 	return target_doc
 
+@frappe.whitelist()
+def make_gdn_return_material_request(source_name, target_doc=None):
+	if isinstance(target_doc,str):
+		target_doc = frappe.get_doc(json.loads(target_doc))
+	dn = frappe.get_doc('Delivery Note', source_name)
+	frappe.db.set_value('Delivery Note',source_name,'custom_dn_selected',1)
+	frappe.db.commit()
+	i_c = []
+	d_c = []
+	for md in target_doc.dn_mr_item:
+		d_c.append(md.against)
+	if dn.name in d_c:
+		return target_doc
+	for mi in target_doc.items:
+		i_c.append(mi.item_code)
+	for i in dn.delivery_note_item:
+		if i.sku in i_c:
+			for mi in target_doc.items:
+				if mi.item_code == i.sku:
+					mi.required_quantity += i.total_quantity
+					split_data = json.loads(mi.split_data)
+					split_data.append({"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":0,"r_qty":0,"s_qty":0,"parent":dn.name})
+					mi.split_data = json.dumps(split_data)
+		else:
+			target_d = frappe.new_doc("Material Request Item", target_doc, "items")
+			target_d.item_code = i.sku
+			target_d.item_name = i.product_name
+			target_d.required_quantity = i.total_quantity
+			target_d.qty = 0
+			target_d.description = i.product_name
+			target_d.uom = 'Nos'
+			target_d.conversion_factor = 1
+			target_d.schedule_date = target_doc.transaction_date
+			split_data = [{"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":0,"r_qty":0,"s_qty":0,"parent":dn.name}]
+			target_d.split_data = json.dumps(split_data)
+			target_doc.append("items", target_d)
+		nc = frappe.new_doc("MR DN Item", target_doc, "dn_mr_item")
+		nc.against = dn.name
+		nc.sku = i.sku
+		nc.product_name = i.product_name
+		nc.qauntity = i.total_quantity
+		target_doc.append("dn_mr_item",nc)
+	
+	return target_doc
+
 
 @frappe.whitelist()
 def make_project(source_name, target_doc=None):

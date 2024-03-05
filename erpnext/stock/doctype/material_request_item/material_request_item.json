@@ -21,8 +21,12 @@
   "required_quantity",
   "qty",
   "pack_quantity",
+  "short_quantity",
   "stock_uom",
   "from_warehouse",
+  "split",
+  "split_data",
+  "split_wise",
   "warehouse",
   "col_break2",
   "uom",
@@ -85,7 +89,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "columns": 3,
+   "columns": 2,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -418,6 +422,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 2,
    "depends_on": "eval:parent.material_request_type == \"Material Transfer\"",
    "fieldname": "from_warehouse",
    "fieldtype": "Link",
@@ -487,13 +492,41 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Pack Quantity"
+  },
+  {
+   "columns": 1,
+   "fieldname": "short_quantity",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Short Quantity"
+  },
+  {
+   "columns": 1,
+   "fieldname": "split",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "label": "Split"
+  },
+  {
+   "fieldname": "split_data",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Split Data"
+  },
+  {
+   "default": "0",
+   "fieldname": "split_wise",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Split Wise"
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-02-20 17:14:33.329117",
+ "modified": "2024-03-05 15:42:37.944829",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
