@@ -134,6 +134,9 @@ class MaterialRequest(BuyingController):
 			se = make_stock_entry(self.name)
 			se.save(ignore_permissions=True)
 			se.submit()
+			for i in self.dn_mr_item:
+				dn = frappe.get_doc('Delivery Note',i.against)
+				dn.submit()
 		elif self.type == 'Put Away GRN':
 			se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
 			for i in self.items:
