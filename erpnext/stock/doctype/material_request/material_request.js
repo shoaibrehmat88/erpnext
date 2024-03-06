@@ -147,6 +147,7 @@ frappe.ui.form.on('Material Request', {
 		frm.set_query('picking_bin', function() {
 			return {
 				filters: {
+					'location':frm.doc.custom_location,
 					'occupied': 0
 				}
 			}
@@ -342,7 +343,7 @@ frappe.ui.form.on('Material Request', {
 				custom_cn: undefined,
 				// custom_location: undefined,
 			},
-			columns:["name","custom_cn","custom_location"],
+			columns:["posting_date","custom_cn","custom_store_order_ref_id"],
 			get_query_filters: {
 				docstatus: 0,
 				// status: ["not in", ["Closed", "On Hold"]],
@@ -374,7 +375,7 @@ frappe.ui.form.on('Material Request', {
 					custom_is_main_location : 1
 				}
 			}],
-			columns:["name","custom_main_location"],
+			columns:["posting_date","custom_main_location"],
 			get_query_filters: {
 				docstatus: 0,
 				// status: ["not in", ["Closed", "On Hold"]],
@@ -399,7 +400,7 @@ frappe.ui.form.on('Material Request', {
 				custom_cn: undefined,
 				// custom_location: undefined,
 			},
-			columns:["name","custom_cn","custom_location"],
+			columns:["posting_date","custom_cn","custom_store_order_ref_id"],
 			get_query_filters: {
 				docstatus: 0,
 				// status: ["not in", ["Closed", "On Hold"]],
@@ -895,6 +896,7 @@ function updateChildTable(frm){
 		frm.get_field('items').grid.toggle_display('pack_quantity',1);
 		frm.get_field('items').grid.update_docfield_property('pack_quantity','label','Pack Quantity');
 		frm.get_field('items').grid.toggle_display('short_quantity',0);
+		frm.get_field('items').grid.toggle_display('split',0);
 		frm.get_field('items').grid.reset_grid();
 		frm.set_query("set_warehouse", function(doc){
 			return {
@@ -939,7 +941,6 @@ function updateChildTable(frm){
 		frm.get_field('items').grid.toggle_display('short_quantity',1);
 		frm.get_field('items').grid.toggle_display('pack_quantity',1);
 		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
-		frm.get_field('items').grid.toggle_display('split',0);
 		frm.get_field('items').grid.reset_grid();
 		frm.set_query("set_warehouse", function(doc){
 			return {
