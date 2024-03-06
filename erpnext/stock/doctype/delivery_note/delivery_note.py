@@ -348,7 +348,7 @@ class DeliveryNote(SellingController):
 	def validate_packed_qty(self):
 		"""Validate that if packed qty exists, it should be equal to qty"""
 		#postex
-		if self.is_return == 0:
+		if self.is_return == 0 and self.custom_dn_selected == 0:
 			for i in self.items:
 				if i.qty != i.pack_quantity:
 					frappe.throw("Unable to submit order!<br/>Please review the quantities picked to ensure they match the requested quantities.")
