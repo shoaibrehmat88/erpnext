@@ -66,6 +66,14 @@ class MaterialRequest(BuyingController):
 						)
 					)
 
+	def on_trash(self):
+		if self.type == 'Pick & Pack' or self.type == 'Put Away Return':
+			dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
+			frappe.db.sql(f"""update `tabDelivery Note` set custom_dn_selected = 0 WHERE name in ({dns})""")
+		elif self.type == 'Put Away GRN':
+			se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
+			frappe.db.sql(f"""UPDATE `tabStock Entry` set custom_se_selected = 0 WHERE name in ({se})""")
+	
 	def validate(self):
 		super(MaterialRequest, self).validate()
 
