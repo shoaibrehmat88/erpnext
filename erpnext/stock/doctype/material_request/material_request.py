@@ -116,9 +116,10 @@ class MaterialRequest(BuyingController):
 
 	def set_title(self):
 		"""Set title as comma separated list of items"""
-		if not self.title:
-			items = ", ".join([d.item_name for d in self.items][:3])
-			self.title = _("{0} Request for {1}").format(self.material_request_type, items)[:100]
+		# if not self.title:
+		# 	items = ", ".join([d.item_name for d in self.items][:3])
+		# 	self.title = _("{0} Request for {1}").format(self.material_request_type, items)[:100]
+		self.title = 'Bulk Actions'
 
 	def on_submit(self):
 		self.update_requested_qty_in_production_plan()
@@ -126,7 +127,7 @@ class MaterialRequest(BuyingController):
 		if self.material_request_type == "Purchase":
 			self.validate_budget()
 		#Postex
-		if self.type == 'Pick List Request':
+		if self.type == 'Pick & Pack':
 			dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
 			frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
 			frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
@@ -155,7 +156,7 @@ class MaterialRequest(BuyingController):
 				dn.submit()
 	def before_save(self):
 		if self.workflow_state == None or self.workflow_state == 'To Pick':
-			if self.type == 'Pick List Request' and self.workflow_state != 'To Pack':
+			if self.type == 'Pick & Pack' and self.workflow_state != 'To Pack':
 				self.workflow_state = 'To Pick'
 			elif self.type == 'Put Away GRN' and self.workflow_state != 'Approved' :
 				self.workflow_state = 'Draft'

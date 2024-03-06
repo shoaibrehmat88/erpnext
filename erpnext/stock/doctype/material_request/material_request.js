@@ -11,6 +11,27 @@ frappe.ui.form.on('Material Request', {
 	},
 	type: function(frm){
 		updateChildTable(frm);
+		frm.clear_table('items');
+		frm.clear_table('dn_mr_items');
+		frm.clear_table('mr_se_item');
+		if (frm.doc.type == 'Pick & Pack'){
+			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+		}else if(frm.doc.type == 'Put Away GRN'){
+			// Button
+			frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+		}else if(frm.doc.type == 'Put Away Return'){
+			// Button
+			frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+		}	
 	},
 	custom_scan_barcode:function(frm){
 		if (frm.doc.custom_barcode != ''){
@@ -41,7 +62,7 @@ frappe.ui.form.on('Material Request', {
 								// 	}
 								// 	d.pack_quantity -= 1;
 								// }
-							}else if(frm.doc.type == 'Pick List Request'){
+							}else if(frm.doc.type == 'Pick & Pack'){
 								if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){								
 									if(d.qty < (d.pack_quantity + 1)){
 										frm.doc.custom_scan_barcode = '';
@@ -224,7 +245,7 @@ frappe.ui.form.on('Material Request', {
 	make_custom_buttons: function(frm) {
 		// if (frm.doc.docstatus==0) {
 		// 	frm.add_custom_button(__("Bill of Materials"),
-		// 		() => frm.events.get_items_from_bom(frm), __("Get Items From"));
+		// 		() => frm.events.get_items_from_bom(frm), __("Fetch Products"));
 		// }
 
 		// if (frm.doc.docstatus == 1 && frm.doc.status != 'Stopped') {
@@ -286,7 +307,7 @@ frappe.ui.form.on('Material Request', {
 
 		if (frm.doc.docstatus===0) {
 			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
-				__("Get Items From"));
+				__("Fetch Products"));
 		}
 
 		if (frm.doc.docstatus == 1 && frm.doc.status == 'Stopped') {
@@ -435,7 +456,7 @@ frappe.ui.form.on('Material Request', {
 
 	get_items_from_bom: function(frm) {
 		var d = new frappe.ui.Dialog({
-			title: __("Get Items from BOM"),
+			title: __("Fetch Products BOM"),
 			fields: [
 				{"fieldname":"bom", "fieldtype":"Link", "label":__("BOM"),
 					options:"BOM", reqd: 1, get_query: function() {
@@ -857,7 +878,9 @@ function set_schedule_date(frm) {
 }
 
 function updateChildTable(frm){
-	if (frm.doc.type == 'Pick List Request'){
+	if (frm.doc.type == 'Pick & Pack'){
+		frm.doc.naming_series = 'BPL-GDN-.YYYY.-';
+		frm.refresh_field('naming_series');
 		frm.set_df_property('set_warehouse','reqd',1);
 		frm.set_df_property('set_warehouse','hidden',0);
 		frm.set_df_property('set_warehouse','label','Packing Location');
@@ -873,10 +896,6 @@ function updateChildTable(frm){
 		frm.get_field('items').grid.update_docfield_property('pack_quantity','label','Pack Quantity');
 		frm.get_field('items').grid.toggle_display('short_quantity',0);
 		frm.get_field('items').grid.reset_grid();
-		frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
-		__("Get Items From"));
-		frm.remove_custom_button(__('GRN'),__("Get Items From"));
-		frm.remove_custom_button(__('GDN Return'),__("Get Items From"));
 		frm.set_query("set_warehouse", function(doc){
 			return {
 				filters: {
@@ -889,34 +908,29 @@ function updateChildTable(frm){
 		});
 
 	}else if(frm.doc.type == 'Put Away GRN'){
+		frm.doc.naming_series = 'BPA-GRN-.YYYY.-';
+		frm.refresh_field('naming_series');		
 		frm.set_df_property('set_warehouse','reqd',0);
 		frm.set_df_property('set_warehouse','hidden',1);
 		frm.set_df_property('picking_bin','reqd',0);
 		frm.set_df_property('picking_bin','hidden',1);
-		// Button
-		frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
-		__("Get Items From"));
-		frm.remove_custom_button(__('GDN'),__("Get Items From"));
-		frm.remove_custom_button(__('GDN Return'),__("Get Items From"));
 		frm.get_field('items').grid.update_docfield_property('qty','label','Qty');
 		frm.get_field('items').grid.toggle_display('required_quantity',0);
 		frm.get_field('items').grid.toggle_display('pack_quantity',0);
 		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
 		frm.get_field('items').grid.toggle_display('from_warehouse',1);
 		frm.get_field('items').grid.toggle_display('short_quantity',0);
-		frm.get_field('items').grid.update_docfield_property('from_warehouse','label','Target Location');
+		frm.get_field('items').grid.toggle_display('split',0);
+		frm.get_field('items').grid.update_docfield_property('from_warehouse','label','Bin');
+		frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
 		frm.get_field('items').grid.reset_grid();
 	}else if(frm.doc.type == 'Put Away Return'){
+		frm.doc.naming_series = 'BPA-RTN-.YYYY.-';
+		frm.refresh_field('naming_series');
 		frm.set_df_property('picking_bin','reqd',0);
 		frm.set_df_property('picking_bin','hidden',1);
 		frm.set_df_property('set_warehouse','label','Rejected Location');
 		frm.set_df_property('set_warehouse','hidden',0);
-		// Button
-		frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
-		__("Get Items From"));
-		frm.remove_custom_button(__('GRN'),__("Get Items From"));
-		frm.remove_custom_button(__('GDN'),__("Get Items From"));
-
 		frm.get_field('items').grid.update_docfield_property('required_quantity','label','Total Quantity');
 		frm.get_field('items').grid.update_docfield_property('qty','label','Accepted Quantity');
 		frm.get_field('items').grid.update_docfield_property('pack_quantity','label','Rejected Quantity');
@@ -925,6 +939,7 @@ function updateChildTable(frm){
 		frm.get_field('items').grid.toggle_display('short_quantity',1);
 		frm.get_field('items').grid.toggle_display('pack_quantity',1);
 		frm.get_field("items").grid.toggle_reqd("from_warehouse", 1);
+		frm.get_field('items').grid.toggle_display('split',0);
 		frm.get_field('items').grid.reset_grid();
 		frm.set_query("set_warehouse", function(doc){
 			return {

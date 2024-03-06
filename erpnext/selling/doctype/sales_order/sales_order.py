@@ -616,7 +616,7 @@ def make_grn_material_request(source_name, target_doc=None):
 	frappe.db.commit()
 	i_c = []
 	d_c = []
-	for md in target_doc.dn_mr_item:
+	for md in target_doc.mr_se_item:
 		d_c.append(md.against)
 	if se.name in d_c:
 		return target_doc
