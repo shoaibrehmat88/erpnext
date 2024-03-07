@@ -153,7 +153,7 @@ frappe.ui.form.on('Material Request', {
 			}
 		});		
 		updateChildTable(frm);
-
+		bulkPrintOption(frm);
 	},
 
 	onload: function(frm) {
@@ -213,6 +213,7 @@ frappe.ui.form.on('Material Request', {
 
 		frm.set_df_property('naming_series','hidden',1);
 		updateChildTable(frm);
+		bulkPrintOption(frm);
 
 	},
 
@@ -327,6 +328,39 @@ frappe.ui.form.on('Material Request', {
 			}
 		});
 	},
+	bulk_print: function(frm) {
+		open_url_post(
+			'/api/method/erpnext.stock.doctype.material_request.material_request.generate_bulk_pdf',
+			{
+				docname: frm.doc.name
+			}
+		);
+	},
+	bulk_airway_print: function(frm) {
+		open_url_post(
+			'/api/method/erpnext.stock.doctype.material_request.material_request.generate_bulk_airway_pdf',
+			{
+				docname: frm.doc.name
+			}
+		);
+		// frappe.call({
+		// 	method: 'erpnext.stock.doctype.material_request.material_request.generate_bulk_airway_pdf',
+		// 	args: {
+		// 		docname: frm.doc.name  // List of PDF file paths to merge
+		// 	},
+		// 	callback: function(response) {
+		// 		if (!response.exc && !response.error) {
+		// 			var blob = new Blob([response.message], { type: 'application/pdf' });
+		// 			var link = document.createElement('a');
+		// 			link.href = window.URL.createObjectURL(blob);
+		// 			link.download = 'merged_pdf.pdf';
+		// 			link.click();
+		// 		} else {
+		// 			frappe.msgprint('Failed to merge PDFs: ' + response.error || response.exc || '');
+		// 		}
+		// 	}
+		// });		
+	},
 
 	get_items_from_sales_order: function(frm) {
 		if (frm.doc.custom_location == "" || frm.doc.custom_location == undefined){
@@ -353,7 +387,8 @@ frappe.ui.form.on('Material Request', {
 				workflow_state:'To Pick',	
 				company: frm.doc.company,
 				custom_location : frm.doc.custom_location
-			}
+			},
+			primary_action_label : 'Select Orders'
 		});
 	},
 	get_items_from_grn: function(frm) {
@@ -385,7 +420,8 @@ frappe.ui.form.on('Material Request', {
 				// workflow_state:'To Pick',	
 				company: frm.doc.company,
 				custom_main_location : frm.doc.custom_location
-			}
+			},
+			primary_action_label : 'Select Orders'
 		});
 	},
 	get_items_from_gdn_return: function(frm) {
@@ -411,7 +447,8 @@ frappe.ui.form.on('Material Request', {
 				is_return:1,
 				company: frm.doc.company,
 				custom_location : frm.doc.custom_location
-			}
+			},
+			primary_action_label : 'Select Orders'
 		});
 	},
 
@@ -470,7 +507,7 @@ frappe.ui.form.on('Material Request', {
 				{"fieldname":"fetch_exploded", "fieldtype":"Check",
 					"label":__("Fetch exploded BOM (including sub-assemblies)"), "default":1}
 			],
-			primary_action_label: 'Get Items',
+			primary_action_label: 'Select Orders',
 			primary_action(values) {
 				if(!values) return;
 				values["company"] = frm.doc.company;
@@ -956,3 +993,13 @@ function updateChildTable(frm){
 
 }
 
+function bulkPrintOption(frm){
+	if(frm.doc.type == 'Pick & Pack'){
+		frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
+		frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
+	}else if(frm.doc.type == 'Put Away GRN'){
+		frm.add_custom_button(__('Print GRN'), () => frm.events.bulk_print(frm));
+	}else if(frm.doc.type == 'Put Away Return'){
+		frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
+	}
+}

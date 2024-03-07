@@ -819,3 +819,71 @@ def make_in_transit_stock_entry(source_name, in_transit_warehouse):
 		row.t_warehouse = in_transit_warehouse
 
 	return ste_doc
+
+@frappe.whitelist()
+def generate_bulk_pdf(docname):
+	doc = frappe.get_doc('Material Request',docname)
+	pdf_data = ''			
+	if doc.type == 'Pick & Pack':			
+		for d in doc.dn_mr_item:
+			pdf_data = frappe.get_template("postex/templates/gdn.html").render({"dn_name":d.against})
+	from frappe.utils.pdf import get_pdf
+	pdf = get_pdf(pdf_data)	
+	filename = f"{docname}.pdf"
+	try:
+		# Send the PDF file as a response
+		frappe.local.response.filename = filename
+		frappe.local.response.filecontent = pdf
+		frappe.local.response.type = 'download'			# Delete the PDF file after it has been sent
+	except Exception as e:
+		frappe.log_error(f"Error: {str(e)}", title="PDF Download Error")
+		frappe.response['error'] = str(e)		
+
+
+@frappe.whitelist()
+def generate_bulk_airway_pdf(docname):
+	import PyPDF2
+	from io import BytesIO
+	import os
+	import requests
+	
+	def download_pdf_from_link(pdf_link):
+		# Download the PDF file from the public link
+		response = requests.get(pdf_link)
+		
+		# Check if the request was successful
+		if response.status_code == 200:
+			return BytesIO(response.content)  # Return PDF content as BytesIO object
+		else:
+			frappe.msgprint(_("Failed to download PDF from link: {0}").format(pdf_link))
+			return None	
+	doc = frappe.get_doc('Material Request',docname)
+	pdf_data = ''
+	pdf_writer = PyPDF2.PdfWriter()
+	if doc.type == 'Pick & Pack':		
+		for d in doc.dn_mr_item:
+			airway_bill = frappe.get_value('Delivery Note',d.against,"custom_airway_bill")
+			pdf_bytesio = download_pdf_from_link(airway_bill)			
+			if pdf_bytesio:
+				pdf_reader = PyPDF2.PdfReader(pdf_bytesio)
+				for page_num in range(len(pdf_reader.pages)):
+					pdf_writer.add_page(pdf_reader.pages[page_num])			
+
+	merged_pdf_bytes = BytesIO()
+	pdf_writer.write(merged_pdf_bytes)
+	merged_pdf_bytes.seek(0)
+	file_bytes = merged_pdf_bytes.getvalue()        
+	# Write the bytes to a temporary file
+	temp_file = 'merged_pdf.pdf'  # Change the path as needed
+	with open(temp_file, "wb") as fileobj:
+		fileobj.write(file_bytes)
+	with open(temp_file, "rb") as fileobj:		
+		filedata = fileobj.read()
+
+	frappe.local.response.filename = os.path.basename(temp_file)
+	frappe.local.response.filecontent = filedata
+	frappe.local.response.type = "download"
+	os.remove(temp_file)
+	# Send the temporary file as a response
+	# return frappe.send_file(temp_file, as_attachment=True)	
+
