@@ -298,7 +298,7 @@ def get_stock_ledger_entries(filters, items):
 			& (sle.is_cancelled == 0)
 			& (sle.posting_date[filters.from_date : filters.to_date])
 		)
-		.orderby(CombineDatetime(sle.posting_date, sle.posting_time))
+		# .orderby(CombineDatetime(sle.posting_date, sle.posting_time))
 		.orderby(sle.creation)
 	)
 
