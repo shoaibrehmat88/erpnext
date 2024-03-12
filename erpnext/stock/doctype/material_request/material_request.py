@@ -151,6 +151,7 @@ class MaterialRequest(BuyingController):
 			for i in self.items:
 				frappe.db.sql(f"""UPDATE `tabStock Entry Detail` set t_warehouse = '{i.from_warehouse}' WHERE item_code = '{i.item_code}' and parent in ({se})""",auto_commit=True)
 			for s in self.mr_se_item:
+				frappe.db.sql(f"""UPDATE `tabStock Entry` set custom_against_mr = '{self.name}' WHERE name = '{s.against}'""",auto_commit=True)
 				d = frappe.get_doc('Stock Entry',s.against)
 				d.submit()
 		elif self.type == 'Put Away Return':
@@ -825,8 +826,7 @@ def generate_bulk_pdf(docname):
 	doc = frappe.get_doc('Material Request',docname)
 	pdf_data = ''			
 	if doc.type == 'Pick & Pack':			
-		for d in doc.dn_mr_item:
-			pdf_data = frappe.get_template("postex/templates/gdn.html").render({"dn_name":d.against})
+		pdf_data = frappe.get_template("postex/templates/gdn.html").render({"doc":doc})
 	from frappe.utils.pdf import get_pdf
 	pdf = get_pdf(pdf_data)	
 	filename = f"{docname}.pdf"
@@ -884,6 +884,4 @@ def generate_bulk_airway_pdf(docname):
 	frappe.local.response.filecontent = filedata
 	frappe.local.response.type = "download"
 	os.remove(temp_file)
-	# Send the temporary file as a response
-	# return frappe.send_file(temp_file, as_attachment=True)	
 

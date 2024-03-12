@@ -613,12 +613,12 @@ class PurchaseReceipt(BuyingController):
 			if d.is_fixed_asset:
 				self.update_assets(d, d.valuation_rate)
 
-		if warehouse_with_no_account:
-			frappe.msgprint(
-				_("No accounting entries for the following warehouses")
-				+ ": \n"
-				+ "\n".join(warehouse_with_no_account)
-			)
+		# if warehouse_with_no_account:
+		# 	frappe.msgprint(
+		# 		_("No accounting entries for the following warehouses")
+		# 		+ ": \n"
+		# 		+ "\n".join(warehouse_with_no_account)
+		# 	)
 
 	def add_provisional_gl_entry(
 		self, item, gl_entries, posting_date, provisional_account, reverse=0

@@ -55,7 +55,7 @@ frappe.ui.form.on("Purchase Order", {
 
 	refresh: function(frm) {
 		// frm.set_df_property('items', 'cannot_add_rows', false);
-		// frm.set_df_property('items', 'multiple_rows', false);
+		// jQuery(document).find(".grid-add-multiple-rows").addClass("hidden")
 		// frm.set_df_property('items', 'cannot_delete_rows', true);
 		if(frm.doc.is_old_subcontracting_flow) {
 			frm.trigger('get_materials_from_supplier');

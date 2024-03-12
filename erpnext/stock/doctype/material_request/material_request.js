@@ -46,7 +46,6 @@ frappe.ui.form.on('Material Request', {
 					frm.doc.items.forEach(function(d){
 						if (d.item_code == item_code){
 							if(frm.doc.type == 'Put Away Return'){
-								console.log(frm.doc.__islocal)
 								// if(frm.doc.__islocal != undefined){
 									if(d.required_quantity > (d.qty - 1)){
 										frm.doc.custom_scan_barcode = '';
@@ -63,7 +62,7 @@ frappe.ui.form.on('Material Request', {
 								// 	d.pack_quantity -= 1;
 								// }
 							}else if(frm.doc.type == 'Pick & Pack'){
-								if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){								
+								if(frm.doc.__islocal == undefined || frm.doc.__islocal == 0){
 									if(d.qty < (d.pack_quantity + 1)){
 										frm.doc.custom_scan_barcode = '';
 										frm.refresh_field('custom_scan_barcode');
@@ -232,6 +231,7 @@ frappe.ui.form.on('Material Request', {
 		frm.set_df_property('items', 'cannot_add_rows', true);
 		frm.set_df_property('items', 'cannot_delete_rows', true);
 		updateChildTable(frm);
+		bulkPrintOption(frm);
 	},
 
 	set_from_warehouse: function(frm) {
@@ -374,6 +374,7 @@ frappe.ui.form.on('Material Request', {
 			source_doctype: "Delivery Note",
 			target: frm,
 			setters: {
+				custom_store_order_ref_id: undefined,
 				custom_cn: undefined,
 				// custom_location: undefined,
 			},
@@ -433,6 +434,7 @@ frappe.ui.form.on('Material Request', {
 			source_doctype: "Delivery Note",
 			target: frm,
 			setters: {
+				custom_store_order_ref_id: undefined,
 				custom_cn: undefined,
 				// custom_location: undefined,
 			},
@@ -994,12 +996,14 @@ function updateChildTable(frm){
 }
 
 function bulkPrintOption(frm){
-	if(frm.doc.type == 'Pick & Pack'){
-		frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
-		frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
-	}else if(frm.doc.type == 'Put Away GRN'){
-		frm.add_custom_button(__('Print GRN'), () => frm.events.bulk_print(frm));
-	}else if(frm.doc.type == 'Put Away Return'){
-		frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
+	if(frm.doc.__islocal == undefined){
+		if(frm.doc.type == 'Pick & Pack' && frm.doc.workflow_state == 'To Pack'){
+			frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
+			frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
+		}else if(frm.doc.type == 'Put Away GRN'){
+			frm.add_custom_button(__('Print GRN'), () => frm.events.bulk_print(frm));
+		}else if(frm.doc.type == 'Put Away Return'){
+			frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
+		}
 	}
 }
