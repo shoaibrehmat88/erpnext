@@ -998,6 +998,7 @@ function updateChildTable(frm){
 function bulkPrintOption(frm){
 	if(frm.doc.__islocal == undefined){
 		if(frm.doc.type == 'Pick & Pack' && frm.doc.workflow_state != 'To Pick'){
+			frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
 			frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
 			frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
 		}else if(frm.doc.type == 'Put Away GRN'){
@@ -1006,4 +1007,13 @@ function bulkPrintOption(frm){
 			frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
 		}
 	}
+	if(frm.doc.type == 'Pick & Pack'){
+		if(frm.doc.__islocal != undefined){
+			frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',1);
+		}else if(frm.doc.workflow_state == 'To Pick' || frm.doc.workflow_state == 'To Pack'){
+			frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
+			frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',0);
+		}
+	} 
+	frm.get_field('items').grid.reset_grid();
 }

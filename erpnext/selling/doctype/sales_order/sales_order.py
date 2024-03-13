@@ -597,7 +597,12 @@ def make_material_request(source_name, target_doc=None):
 			target_d.uom = i.uom
 			target_d.conversion_factor = i.conversion_factor
 			target_d.schedule_date = target_doc.transaction_date
-			target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
+			wh = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
+			w = frappe.get_doc('Warehouse',wh)
+			if w.custom_is_pickable_bin  == 1:
+				target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
+			else:
+				target_d.from_warehouse = ''
 			target_doc.append("items", target_d)
 		nc = frappe.new_doc("MR DN Item", target_doc, "dn_mr_item")
 		nc.against = dn.name

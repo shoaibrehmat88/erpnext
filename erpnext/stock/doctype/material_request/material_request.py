@@ -113,6 +113,20 @@ class MaterialRequest(BuyingController):
 		self.reset_default_field_value("set_warehouse", "items", "warehouse")
 		self.reset_default_field_value("set_from_warehouse", "items", "from_warehouse")
 
+		#postex 
+		if self.type == 'Pick & Pack':
+			for i in self.items:
+				if self.workflow_state == 'To Pick':
+					if i.required_quantity != i.qty:
+						frappe.throw(f"Required quantity and pick quantity should be same for item:'{i.item_name}'")
+				elif self.workflow_state == 'To Pack':
+					if i.qty != i.pack_quantity:
+						frappe.throw(f"Pick quantity and pack quantity should be same for item:'{i.item_name}'")
+		elif self.type == 'Put Away Return':
+			for i in self.items:
+				print(i)
+
+
 	def before_update_after_submit(self):
 		self.validate_schedule_date()
 
@@ -135,34 +149,38 @@ class MaterialRequest(BuyingController):
 		if self.material_request_type == "Purchase":
 			self.validate_budget()
 		#Postex
-		if self.type == 'Pick & Pack':
-			dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
-			frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
-			frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
-			frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
-			se = make_stock_entry(self.name)
-			se.save(ignore_permissions=True)
-			se.submit()
-			for i in self.dn_mr_item:
-				dn = frappe.get_doc('Delivery Note',i.against)
-				dn.submit()
-		elif self.type == 'Put Away GRN':
-			se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
-			for i in self.items:
-				frappe.db.sql(f"""UPDATE `tabStock Entry Detail` set t_warehouse = '{i.from_warehouse}' WHERE item_code = '{i.item_code}' and parent in ({se})""",auto_commit=True)
-			for s in self.mr_se_item:
-				frappe.db.sql(f"""UPDATE `tabStock Entry` set custom_against_mr = '{self.name}' WHERE name = '{s.against}'""",auto_commit=True)
-				d = frappe.get_doc('Stock Entry',s.against)
-				d.submit()
-		elif self.type == 'Put Away Return':
-			for i in self.items:
-				if i.split_wise == 1:
-					data = json.loads(i.split_data)
-					for d in data:
-						frappe.db.sql(f"""UPDATE `tabDelivery Note Return Item` set accepted_quantity = '{d.get('a_qty')}', rejected_quantity = '{d.get('r_qty')}', short_quantity = '{d.get('s_qty')}', a_warehouse = '{i.from_warehouse}', r_warehouse = '{self.set_warehouse}' WHERE sku = '{i.item_code}' and parent = '{d.get('parent')}'""",auto_commit=True)
-			for d in self.dn_mr_item:
-				dn = frappe.get_doc('Delivery Note',d.against)
-				dn.submit()
+		try:
+			if self.type == 'Pick & Pack':
+				dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
+				frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
+				frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
+				frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
+				se = make_stock_entry(self.name)
+				se.save(ignore_permissions=True)
+				se.submit()
+				for i in self.dn_mr_item:
+					dn = frappe.get_doc('Delivery Note',i.against)
+					dn.submit()
+			elif self.type == 'Put Away GRN':
+				se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
+				for i in self.items:
+					frappe.db.sql(f"""UPDATE `tabStock Entry Detail` set t_warehouse = '{i.from_warehouse}' WHERE item_code = '{i.item_code}' and parent in ({se})""",auto_commit=True)
+				for s in self.mr_se_item:
+					frappe.db.sql(f"""UPDATE `tabStock Entry` set custom_against_mr = '{self.name}' WHERE name = '{s.against}'""",auto_commit=True)
+					d = frappe.get_doc('Stock Entry',s.against)
+					d.submit()
+			elif self.type == 'Put Away Return':
+				for i in self.items:
+					if i.split_wise == 1:
+						data = json.loads(i.split_data)
+						for d in data:
+							frappe.db.sql(f"""UPDATE `tabDelivery Note Return Item` set accepted_quantity = '{d.get('a_qty')}', rejected_quantity = '{d.get('r_qty')}', short_quantity = '{d.get('s_qty')}', a_warehouse = '{i.from_warehouse}', r_warehouse = '{self.set_warehouse}' WHERE sku = '{i.item_code}' and parent = '{d.get('parent')}'""",auto_commit=True)
+				for d in self.dn_mr_item:
+					dn = frappe.get_doc('Delivery Note',d.against)
+					dn.submit()
+		except Exception as e:
+			frappe.throw(f"{str(e)}")
+			frappe.db.rollback()
 	def before_save(self):
 		if self.workflow_state == None or self.workflow_state == 'To Pick':
 			if self.type == 'Pick & Pack' and self.workflow_state != 'To Pack':
