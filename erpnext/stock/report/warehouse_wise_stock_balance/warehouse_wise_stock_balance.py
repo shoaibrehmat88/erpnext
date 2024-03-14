@@ -30,7 +30,7 @@ def get_warehouse_wise_balance(filters: StockBalanceFilter) -> List[SLEntry]:
 
 	query = (
 		frappe.qb.from_(sle)
-		.select(sle.warehouse, Sum(sle.stock_value_difference).as_("stock_balance"))
+		.select(sle.warehouse, Sum(sle.actual_qty).as_("stock_balance"))
 		.where((sle.docstatus < 2) & (sle.is_cancelled == 0))
 		.groupby(sle.warehouse)
 	)
