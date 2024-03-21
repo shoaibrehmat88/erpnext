@@ -525,6 +525,7 @@ def make_purchase_receipt(source_name, target_doc=None):
 					"sales_order": "sales_order",
 					"sales_order_item": "sales_order_item",
 					"wip_composite_asset": "wip_composite_asset",
+					"qty":"custom_order_quantity"
 				},
 				"postprocess": update_item,
 				"condition": lambda doc: abs(doc.received_qty) < abs(doc.qty)
