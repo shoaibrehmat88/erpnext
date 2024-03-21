@@ -54,6 +54,13 @@ frappe.ui.form.on("Purchase Order", {
 	},
 
 	refresh: function(frm) {
+		frm.doc.items.forEach(child => {
+			frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
+				child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+			});
+		});
+		refresh_field('items');
+
 		// frm.set_df_property('items', 'cannot_add_rows', false);
 		// jQuery(document).find(".grid-add-multiple-rows").addClass("hidden")
 		// frm.set_df_property('items', 'cannot_delete_rows', true);
@@ -113,6 +120,14 @@ frappe.ui.form.on("Purchase Order", {
 	},
 
 	onload: function(frm) {
+		// Add event listener for row selection
+		frm.fields_dict['items'].grid.wrapper.on('grid-row-click', function(e, args) {
+			var row = args.grid_row;
+			var item_image_field = row.grid.grid_rows[row.rowidx].fields_dict['product_image'];
+
+			// Always show item image regardless of row selection
+			item_image_field.$wrapper.show();
+		});
 		frm.set_query('set_warehouse', function(doc) {
 			return {
 				filters: {

@@ -99,6 +99,13 @@ frappe.ui.form.on("Purchase Receipt", {
 	},
 
 	refresh: function(frm) {
+		frm.doc.items.forEach(child => {
+			frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
+				child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+			});
+		});
+		refresh_field('items');
+
 		frm.set_df_property('items', 'cannot_add_rows', true);
 		frm.set_df_property('items', 'multiple_rows', false);
 		frm.set_df_property('items', 'cannot_delete_rows', true);
