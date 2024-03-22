@@ -121,6 +121,9 @@ frappe.ui.form.on('Delivery Trip', {
 
 		if (frm.doc.docstatus === 0) {
 			frm.add_custom_button(__('Delivery Note'), () => {
+				if (frm.doc.delivery_partner == '' || frm.doc.delivery_partner == undefined){
+					frappe.throw("Please select the delivery company first");
+				}
 				erpnext.utils.map_current_doc({
 					method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
 					source_doctype: "Delivery Note",
@@ -129,7 +132,7 @@ frappe.ui.form.on('Delivery Trip', {
 					setters: {
 					//	company: frm.doc.company,
 					custom_store_order_ref_id:'',
-					sales_partner:'',
+					// sales_partner:'',
 				
 					},
 					get_query_filters: {
