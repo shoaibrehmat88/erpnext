@@ -55,9 +55,11 @@ frappe.ui.form.on("Purchase Order", {
 
 	refresh: function(frm) {
 		frm.doc.items.forEach(child => {
-			frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
-				child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
-			});
+			if (child.item_code){
+				frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
+					child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+				});
+			}
 		});
 		refresh_field('items');
 
@@ -179,6 +181,14 @@ frappe.ui.form.on("Purchase Order Item", {
 			if (row.qty) {
 				row.fg_item_qty = row.qty;
 			}
+		}
+	},
+	item_code: function(frm,cdt,cdn){
+		var child = locals[cdt][cdn];
+		if (child.item_code){
+			frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
+				child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+			});
 		}
 	}
 });

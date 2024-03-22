@@ -129,10 +129,11 @@ frappe.ui.form.on('Delivery Trip', {
 					source_doctype: "Delivery Note",
 					target: frm,
 					date_field: "posting_date",
+					columns:["posting_date","custom_cn","custom_store_order_ref_id"],
 					setters: {
-					//	company: frm.doc.company,
-					custom_store_order_ref_id:'',
-					// sales_partner:'',
+						custom_cn: '',
+						custom_store_order_ref_id:'',
+						// sales_partner:'',
 				
 					},
 					get_query_filters: {

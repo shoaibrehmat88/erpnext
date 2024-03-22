@@ -100,9 +100,11 @@ frappe.ui.form.on("Purchase Receipt", {
 
 	refresh: function(frm) {
 		frm.doc.items.forEach(child => {
-			frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
-				child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
-			});
+			if (child.item_code){
+				frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
+					child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+				});
+			}
 		});
 		refresh_field('items');
 
@@ -389,6 +391,11 @@ frappe.ui.form.on('Purchase Receipt Item', {
 			frappe.model.set_value(cdt, cdn, "sample_quantity", r.sample_quantity);
 			validate_sample_quantity(frm, cdt, cdn);
 		});
+		if (d.item_code){
+			frappe.db.get_value("Item", {"name": d.item_code}, "image", (r) => {
+				d.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+			});
+		}
 	},
 	qty: function(frm, cdt, cdn) {
 		validate_sample_quantity(frm, cdt, cdn);
