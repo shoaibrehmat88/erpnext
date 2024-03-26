@@ -57,7 +57,7 @@ frappe.ui.form.on("Purchase Order", {
 		frm.doc.items.forEach(child => {
 			if (child.item_code){
 				frappe.db.get_value("Item", {"name": child.item_code}, "image", (r) => {
-					child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;">`;
+					child.product_image = `<img src="${r.image}" style="max-width: 30px; max-height: 30px;" class="custom_image_grid">`;
 				});
 			}
 		});

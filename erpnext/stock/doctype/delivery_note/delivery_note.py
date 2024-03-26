@@ -1181,3 +1181,40 @@ def make_return_stock_entries_bulk(dn):
 		# 		"qty" : i.qty
 		# 	})
 		# rse.save()
+
+@frappe.whitelist()
+def generate_and_download_pdf(filters):
+	data = frappe.get_list('Delivery Note',filters=filters,fields=["title","name","workflow_state AS status","custom_cn","custom_picking_bin","custom_store_order_ref_id"])
+	from frappe.utils.pdf import get_pdf
+	from frappe.utils import now
+	html = frappe.get_template("postex/templates/pick_list_pdf.html").render({"data":data})
+	pdf_data = get_pdf(html)
+	file_name = f"Pick List.pdf"
+
+	frappe.local.response.filename = file_name
+	frappe.local.response.filecontent = pdf_data
+	frappe.local.response.type = "download"
+
+@frappe.whitelist()
+def generate_and_download_excel(filters):
+	from openpyxl import Workbook
+	import os
+	# Create a new Excel workbook
+	wb = Workbook()
+	data = frappe.get_list('Delivery Note',filters=filters,fields=["title","name","workflow_state AS status","custom_cn","custom_picking_bin","custom_store_order_ref_id"])
+	sheet = wb.active
+	sheet.title = 'Pick List'
+	sheet.append(["Title","Status","Store Order ID","CN#","Picking Bin","ID"])
+	for d in data:
+		sheet.append([d.title,d.status,d.custom_store_order_ref_id,d.custom_cn,d.custom_picking_bin,d.name])
+	# Save the workbook to a temporary file
+	temp_file = f"pick list.xlsx"
+	wb.save(temp_file)
+
+	with open(temp_file, "rb") as fileobj:
+		filedata = fileobj.read()
+
+	frappe.local.response.filename = os.path.basename(temp_file)
+	frappe.local.response.filecontent = filedata
+	frappe.local.response.type = "download"
+	os.remove(temp_file)

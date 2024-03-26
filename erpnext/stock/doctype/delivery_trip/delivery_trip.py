@@ -450,3 +450,42 @@ def barcode_deliverycompany(barcode):
 		return
 	dn = frappe.get_doc('Delivery Note',{"custom_cn":barcode,"custom_auto_return":0,"is_return":0,"docstatus":1},["name","custom_cn","custom_consignee_name","custom_consignee_city","sales_partner"])
 	return dn
+
+
+
+@frappe.whitelist()
+def generate_and_download_pdf(filters):
+	data = frappe.get_list('Delivery Trip',filters=filters,fields=["name","workflow_state as status","custom_driver","custom_vehicle","departure_time"])
+	from frappe.utils.pdf import get_pdf
+	from frappe.utils import now
+	html = frappe.get_template("postex/templates/load_sheet_pdf.html").render({"data":data})
+	pdf_data = get_pdf(html)
+	file_name = f"Load Sheet.pdf"
+
+	frappe.local.response.filename = file_name
+	frappe.local.response.filecontent = pdf_data
+	frappe.local.response.type = "download"
+
+@frappe.whitelist()
+def generate_and_download_excel(filters):
+	from openpyxl import Workbook
+	import os
+	# Create a new Excel workbook
+	wb = Workbook()
+	data = frappe.get_list('Delivery Trip',filters=filters,fields=["name","workflow_state AS status","custom_driver","custom_vehicle","departure_time"])
+	sheet = wb.active
+	sheet.title = 'Load Sheet'
+	sheet.append(["ID","Status","Driver","Vehicle","Departure Time"])
+	for d in data:
+		sheet.append([d.name,d.status,d.custom_driver,d.custom_vehicle,frappe.get_doc('Delivery Trip',d.name).get_formatted('departure_time')])
+	# Save the workbook to a temporary file
+	temp_file = f"load_sheet.xlsx"
+	wb.save(temp_file)
+
+	with open(temp_file, "rb") as fileobj:
+		filedata = fileobj.read()
+
+	frappe.local.response.filename = os.path.basename(temp_file)
+	frappe.local.response.filecontent = filedata
+	frappe.local.response.type = "download"
+	os.remove(temp_file)

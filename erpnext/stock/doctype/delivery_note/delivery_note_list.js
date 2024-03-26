@@ -15,8 +15,23 @@ frappe.listview_settings['Delivery Note'] = {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
 	},
-	onload: function (doclist) {
+	onload: function (listview) {
 		jQuery('div.menu-btn-group').hide();
+		listview.page.add_inner_button(__('PDF'), function() {
+			open_url_post('/api/method/erpnext.stock.doctype.delivery_note.delivery_note.generate_and_download_pdf',
+				{
+					'filters' : listview.get_filters_for_args()
+				}
+			);
+		},'Download');		
+		listview.page.add_inner_button(__('Excel'), function() {
+			open_url_post('/api/method/erpnext.stock.doctype.delivery_note.delivery_note.generate_and_download_excel',
+				{
+					'filters' : listview.get_filters_for_args()
+				}
+			);
+		},'Download');		
+
 		// const action = () => {
 		// 	const selected_docs = doclist.get_checked_items();
 		// 	const docnames = doclist.get_checked_items(true);

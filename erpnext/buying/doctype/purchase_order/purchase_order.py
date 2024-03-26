@@ -711,3 +711,46 @@ def is_subcontracting_order_created(po_name) -> bool:
 	)
 
 	return True if count else False
+
+@frappe.whitelist()
+def generate_and_download_pdf(filters):
+	data = frappe.get_list('Purchase Order',filters=filters,fields=["name","docstatus","per_received","supplier_name","status","transaction_date"])
+	from frappe.utils.pdf import get_pdf
+	from frappe.utils import now
+	html = frappe.get_template("postex/templates/purchase_order_pdf.html").render({"data":data})
+	pdf_data = get_pdf(html)
+	file_name = f"Load Sheet.pdf"
+
+	frappe.local.response.filename = file_name
+	frappe.local.response.filecontent = pdf_data
+	frappe.local.response.type = "download"
+
+@frappe.whitelist()
+def generate_and_download_excel(filters):
+	from openpyxl import Workbook
+	import os
+	# Create a new Excel workbook
+	wb = Workbook()
+	data = frappe.get_list('Purchase Order',filters=filters,fields=["name","docstatus","per_received","supplier_name","status","transaction_date"])
+	sheet = wb.active
+	sheet.title = 'Load Sheet'
+	sheet.append(["Vendor Name","Status","Date","ID"])
+	for d in data:
+		if d.docstatus == 0:
+			status = 'Draft'
+		elif flt(d.per_received, 2) < 100 and d.status != "Closed":
+			status = 'To Receive'
+		elif d.docstatus == 1:
+			status = 'Completed'
+		sheet.append([d.supplier_name,status,frappe.get_doc('Purchase Order',d.name).get_formatted('transaction_date'),d.name])
+	# Save the workbook to a temporary file
+	temp_file = f"purchase_order.xlsx"
+	wb.save(temp_file)
+
+	with open(temp_file, "rb") as fileobj:
+		filedata = fileobj.read()
+
+	frappe.local.response.filename = os.path.basename(temp_file)
+	frappe.local.response.filecontent = filedata
+	frappe.local.response.type = "download"
+	os.remove(temp_file)

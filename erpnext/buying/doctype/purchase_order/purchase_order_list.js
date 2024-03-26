@@ -46,6 +46,21 @@ frappe.listview_settings['Purchase Order'] = {
 		// listview.page.add_action_item(__("Advance Payment"), ()=>{
 		// 	erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Payment Entry");
 		// });
+		listview.page.add_inner_button(__('PDF'), function() {
+			open_url_post('/api/method/erpnext.buying.doctype.purchase_order.purchase_order.generate_and_download_pdf',
+				{
+					'filters' : listview.get_filters_for_args()
+				}
+			);
+		},'Download');		
+		listview.page.add_inner_button(__('Excel'), function() {
+			open_url_post('/api/method/erpnext.buying.doctype.purchase_order.purchase_order.generate_and_download_excel',
+				{
+					'filters' : listview.get_filters_for_args()
+				}
+			);
+		},'Download');		
+
 
 	}
 };

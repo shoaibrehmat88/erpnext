@@ -490,3 +490,10 @@ body[data-route="pos"] {
 .exercise-col {
 	padding: 10px;
 }
+
+div.grid-row div.grid-body div.editable-row div.grid-static-col div[data-fieldname="product_image"],
+div[data-fieldname="product_image"]{
+	padding:0px !important;
+	text-align: center;
+	padding-top:2px !important;
+}
