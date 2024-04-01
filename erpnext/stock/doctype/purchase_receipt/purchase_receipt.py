@@ -245,35 +245,38 @@ class PurchaseReceipt(BuyingController):
 
 	# on submit
 	def on_submit(self):
-		super(PurchaseReceipt, self).on_submit()
+		try:
+			super(PurchaseReceipt, self).on_submit()
+			# Check for Approving Authority
+			frappe.get_doc("Authorization Control").validate_approving_authority(
+				self.doctype, self.company, self.base_grand_total
+			)
 
-		# Check for Approving Authority
-		frappe.get_doc("Authorization Control").validate_approving_authority(
-			self.doctype, self.company, self.base_grand_total
-		)
+			self.update_prevdoc_status()
+			if flt(self.per_billed) < 100:
+				self.update_billing_status()
+			else:
+				self.db_set("status", "Completed")
 
-		self.update_prevdoc_status()
-		if flt(self.per_billed) < 100:
-			self.update_billing_status()
-		else:
-			self.db_set("status", "Completed")
+			# Updating stock ledger should always be called after updating prevdoc status,
+			# because updating ordered qty, reserved_qty_for_subcontract in bin
+			# depends upon updated ordered qty in PO
+			self.update_stock_ledger()
 
-		# Updating stock ledger should always be called after updating prevdoc status,
-		# because updating ordered qty, reserved_qty_for_subcontract in bin
-		# depends upon updated ordered qty in PO
-		self.update_stock_ledger()
+			from erpnext.stock.doctype.serial_no.serial_no import update_serial_nos_after_submit
 
-		from erpnext.stock.doctype.serial_no.serial_no import update_serial_nos_after_submit
+			update_serial_nos_after_submit(self, "items")
 
-		update_serial_nos_after_submit(self, "items")
+			self.make_gl_entries()
+			self.repost_future_sle_and_gle()
+			self.set_consumed_qty_in_subcontract_order()
 
-		self.make_gl_entries()
-		self.repost_future_sle_and_gle()
-		self.set_consumed_qty_in_subcontract_order()
-
-		#postex
-		se = make_stock_entry(self.name)
-		se.save()
+			#postex
+			se = make_stock_entry(self.name)
+			se.save()
+		except Exception as e:
+			frappe.throw(f"{str(e)}")
+			frappe.db.rollback()
 
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql(

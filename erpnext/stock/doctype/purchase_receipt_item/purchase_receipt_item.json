@@ -1051,6 +1051,7 @@
    "search_index": 1
   },
   {
+   "columns": 1,
    "fieldname": "product_image",
    "fieldtype": "HTML",
    "in_list_view": 1,
@@ -1062,7 +1063,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-21 11:43:35.700026",
+ "modified": "2024-03-27 09:59:02.554596",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

@@ -136,7 +136,7 @@ class StockLedgerEntry(Document):
 			stock_entry_type = ''
 			if self.voucher_type == 'Stock Entry':
 				stock_entry_type = frappe.db.get_value('Stock Entry',self.voucher_no,'stock_entry_type')
-				if stock_entry_type == 'Put Away GRN' or stock_entry_type == 'Put Away Return' or stock_entry_type == 'Put Away Damage' or stock_entry_type == 'Opening Stock':
+				if stock_entry_type == 'Put Away GRN' or stock_entry_type == 'Put Away Return' or stock_entry_type == 'Put Away Damage' or stock_entry_type == 'Opening Stock' or stock_entry_type == 'Stock Discard':
 					_mr = False
 		
 			if _mr == True:
