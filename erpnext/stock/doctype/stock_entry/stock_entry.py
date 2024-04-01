@@ -500,6 +500,8 @@ class StockEntry(StockController):
 					),
 					OpeningEntryAccountError,
 				)
+			if self.stock_entry_type == 'Material Transfer' and self.company == 'Care Pharmacy':
+				d.expense_account = '51101 - Cost of Goods Sold - CP'
 
 	def validate_warehouse(self):
 		"""perform various (sometimes conditional) validations on warehouse"""
