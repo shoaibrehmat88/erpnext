@@ -139,6 +139,9 @@ class StockLedgerEntry(Document):
 				if stock_entry_type == 'Put Away GRN' or stock_entry_type == 'Put Away Return' or stock_entry_type == 'Put Away Damage' or stock_entry_type == 'Opening Stock' or stock_entry_type == 'Stock Discard':
 					_mr = False
 		
+			if self.voucher_type == 'Purchase Receipt' and warehouse.warehouse_type == 'Rejection':
+				_mr = False
+				
 			if _mr == True:
 				qty = self.actual_qty
 				if stock_entry_type == 'Damage':
