@@ -559,15 +559,15 @@ class StockEntry(StockController):
 			if self.purpose in target_mandatory and not d.t_warehouse:
 				if self.to_warehouse:
 					d.t_warehouse = self.to_warehouse
-				else:
-					frappe.throw(_("Target warehouse is mandatory for row {0}").format(d.idx))
+				# else:
+				# 	frappe.throw(_("Target warehouse is mandatory for row {0}").format(d.idx))
 
 			if self.purpose == "Manufacture":
 				if validate_for_manufacture:
 					if d.is_finished_item or d.is_scrap_item:
 						d.s_warehouse = None
-						if not d.t_warehouse:
-							frappe.throw(_("Target warehouse is mandatory for row {0}").format(d.idx))
+						# if not d.t_warehouse:
+						# 	frappe.throw(_("Target warehouse is mandatory for row {0}").format(d.idx))
 					else:
 						d.t_warehouse = None
 						if not d.s_warehouse:
