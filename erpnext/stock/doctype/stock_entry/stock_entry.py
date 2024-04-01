@@ -397,7 +397,7 @@ class StockEntry(StockController):
 				),
 				for_update=True,
 			)
-
+			item.allow_zero_valuation_rate = 1
 			reset_fields = ("stock_uom", "item_name")
 			for field in reset_fields:
 				item.set(field, item_details.get(field))
