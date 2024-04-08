@@ -843,8 +843,10 @@ def make_in_transit_stock_entry(source_name, in_transit_warehouse):
 def generate_bulk_pdf(docname):
 	doc = frappe.get_doc('Material Request',docname)
 	pdf_data = ''			
-	if doc.type == 'Pick & Pack':			
+	if doc.type == 'Pick & Pack' or doc.type == 'Put Away Return':
 		pdf_data = frappe.get_template("postex/templates/gdn.html").render({"doc":doc})
+	else:
+		pdf_data = frappe.get_template("postex/templates/grn.html").render({"doc":doc})
 	from frappe.utils.pdf import get_pdf
 	pdf = get_pdf(pdf_data)	
 	filename = f"{docname}.pdf"

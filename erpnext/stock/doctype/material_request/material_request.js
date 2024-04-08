@@ -1001,7 +1001,7 @@ function bulkPrintOption(frm){
 			frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
 			frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
 			frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
-		}else if(frm.doc.type == 'Put Away GRN'){
+		}else if(frm.doc.type == 'Put Away GRN' && frm.doc.docstatus == 1){
 			frm.add_custom_button(__('Print GRN'), () => frm.events.bulk_print(frm));
 		}else if(frm.doc.type == 'Put Away Return'){
 			frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
