@@ -1242,7 +1242,7 @@
  "idx": 261,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-21 07:50:02.328752",
+ "modified": "2024-04-03 14:35:11.133228",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt",
@@ -1300,6 +1300,17 @@
    "permlevel": 1,
    "read": 1,
    "role": "Stock Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Inbound Incharge",
+   "share": 1,
    "write": 1
   }
  ],
