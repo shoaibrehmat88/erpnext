@@ -2,7 +2,6 @@ frappe.listview_settings['Delivery Note'] = {
 	add_fields: ["customer", "customer_name", "base_grand_total", "per_installed", "per_billed",
 		"transporter_name", "grand_total", "is_return", "status", "currency"],
 	get_indicator: function(doc) {
-		console.log('list function call')
 		if(cint(doc.is_return)==1) {
 			return [__("Return"), "red", "is_return,=,Yes"];
 		} else if (doc.status === "Closed") {
