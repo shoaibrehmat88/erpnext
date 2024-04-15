@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"xLKWDUDzt9\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 28px;\\\"><b>Purchase Management</b></span>\",\"col\":12}},{\"id\":\"nocgohOXi1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TUtB7fyd-r\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor Onboarding\",\"col\":6}},{\"id\":\"f1xxz8_7ZH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Purchase Order\",\"col\":6}},{\"id\":\"OdreB1Dj00\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"0ERpYu-3Ej\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Vendor List\",\"col\":6}},{\"id\":\"JWYmUa4wSX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order List\",\"col\":6}}]",
+ "content": "[{\"id\":\"nocgohOXi1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TUtB7fyd-r\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor Onboarding\",\"col\":6}},{\"id\":\"f1xxz8_7ZH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Purchase Order\",\"col\":6}},{\"id\":\"OdreB1Dj00\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"0ERpYu-3Ej\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Vendor List\",\"col\":6}},{\"id\":\"JWYmUa4wSX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order List\",\"col\":6}}]",
  "creation": "2023-11-17 04:05:50.673892",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Purchase",
  "links": [],
- "modified": "2024-04-03 13:46:54.304996",
+ "modified": "2024-04-15 21:51:09.127095",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase",
