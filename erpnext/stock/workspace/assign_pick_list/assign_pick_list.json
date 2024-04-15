@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"nSZo_xL8Gt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QkIAZb57ES\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending To Assign\",\"col\":4}},{\"id\":\"pU1UIZ9LpX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Assigned Pick List\",\"col\":4}},{\"id\":\"7icLhkZtyq\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Packing In Process\",\"col\":4}}]",
+ "content": "[{\"id\":\"QkIAZb57ES\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending To Assign\",\"col\":4}},{\"id\":\"pU1UIZ9LpX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Assigned Pick List\",\"col\":4}},{\"id\":\"7icLhkZtyq\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Packing In Process\",\"col\":4}}]",
  "creation": "2023-11-17 04:14:53.534183",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Assign Pick List",
  "links": [],
- "modified": "2024-04-15 22:01:47.337643",
+ "modified": "2024-04-15 22:17:10.258023",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Assign Pick List",
