@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"6O-BBuK_fv\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h1\\\">Assign Pick List &amp; Monitor Progress</span>\",\"col\":12}},{\"id\":\"nSZo_xL8Gt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QkIAZb57ES\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udd34 Pending To Assign\",\"col\":4}},{\"id\":\"pU1UIZ9LpX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udfe0 Assigned Pick List\",\"col\":4}},{\"id\":\"7icLhkZtyq\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"\ud83d\udfe1 Packing In Process\",\"col\":4}}]",
+ "content": "[{\"id\":\"6O-BBuK_fv\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h1\\\">Assign Pick List &amp; Monitor Progress</span>\",\"col\":12}},{\"id\":\"nSZo_xL8Gt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QkIAZb57ES\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending To Assign\",\"col\":4}},{\"id\":\"pU1UIZ9LpX\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Assigned Pick List\",\"col\":4}},{\"id\":\"7icLhkZtyq\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Packing In Process\",\"col\":4}}]",
  "creation": "2023-11-17 04:14:53.534183",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Assign Pick List",
  "links": [],
- "modified": "2023-12-13 15:31:11.569217",
+ "modified": "2024-04-15 19:57:30.591452",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Assign Pick List",
@@ -23,17 +23,17 @@
  "quick_lists": [
   {
    "document_type": "Delivery Note",
-   "label": "\ud83d\udd34 Pending To Assign",
+   "label": "Pending To Assign",
    "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"is\",\"not set\",false]]"
   },
   {
    "document_type": "Delivery Note",
-   "label": "\ud83d\udfe0 Assigned Pick List",
+   "label": "Assigned Pick List",
    "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pick\",false],[\"Delivery Note\",\"_assign\",\"like\",\"%picker%\",false]]"
   },
   {
    "document_type": "Delivery Note",
-   "label": "\ud83d\udfe1 Packing In Process",
+   "label": "Packing In Process",
    "quick_list_filter": "[[\"Delivery Note\",\"workflow_state\",\"=\",\"To Pack\",false]]"
   }
  ],

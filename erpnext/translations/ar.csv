@@ -9839,6 +9839,7 @@ Creating Purchase Order ...,إنشاء أمر شراء ...,
 Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب تحديد {} الأرقام التسلسلية للعنصر {}.,
 "Warehouse Management System","نظام إدارة المستودعات"
 "Inbound","الوارد"
+INBOUND,الوارد
 "Purchase","الشراء"
 "Receiving","استلام"
 "Returns","المرتجعات"
@@ -9850,7 +9851,8 @@ Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب ت
 "Bulk Pick List","قائمة اختيار الجملة"
 "Pick List","قائمة الاختيار"
 "Pack List","قائمة التعبئة"
-"Dispatch List","قائمة الإرسال"
+Dispatch List,"قائمة الإرسال"
+Dispatcher List,قائمة الإرسال
 "Reports","التقارير"
 "Setup","الإعداد"
 "Opening Stock","افتتاح المخزون"
@@ -9928,8 +9930,10 @@ Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب ت
 "STOCK DISCARD","تخزين التلف"
 "Once the Product is placed in the Damaged Space you may Discard it from your Inventory.","بمجرد وضع المنتج في المساحة التالفة يمكنك التخلص منه من جردك."
 "DAMAGE RETURN","تحرك المخزون"
+Damage Return,تحرك المخزون
 "If by mistake some of the Products are transferred to the Damaged Space of your Location / warehouse, you may revert this transaction through Damage Return. This will also update such Product Quantities in Shopify this way.","إذا تم نقل بعض المنتجات بالخطأ إلى المساحة التالفة من موقعك/مستودعك، يمكنك استرجاع هذه المعاملة من خلال إرجاع التلف. وسيتم تحديث كميات هذه المنتجات أيضًا في Shopify بهذه الطريقة."
 "STOCK TRANSFER","تحويل المخزون"
+Stock Transfer,تحويل المخزون
 "If you want to move your products from one Bin to the other within the same Location / warehouse use Stock Transfer.","إذا كنت ترغب في نقل منتجاتك من صندوق واحد إلى آخر داخل نفس الموقع/المستودع استخدم تحويل المخزون."
 "Step 1 - Click on the View List","الخطوة 1 - انقر على عرض القائمة"
 "Step 2 -Click on the Blue Button on Right Top of your interface at + Add New Stock Entry","الخطوة 2 - انقر على الزر الأزرق في الزاوية العلوية اليمنى من واجهتك في + إضافة إدخال مخزون جديد"
@@ -9939,7 +9943,7 @@ Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب ت
 "Assign Pick List & Monitor Progress","تعيين قائمة الاختيار ومراقبة التقدم"
 "Pending To Assign","معلق على التعيين"
 "Assigned Pick List","قائمة الاختيار المعينة"
-"Packing In Process","التعبئة قيد التنفيذ"
+Packing In Process,التعبئة قيد التنفيذ
 "Bulk Picking","اختيار بالجملة"
 "Create-pick list","إنشاء قائمة الاختيار"
 "Assignment Pending","في انتظار التعيين"
@@ -9947,7 +9951,7 @@ Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب ت
 "Packer List","قائمة التعبئة"
 "Packing Task","مهمة التعبئة"
 "Bulk Packing","التعبئة بالجملة"
-"LOAD SHEET","ورقة الشحن"
+LOAD SHEET,ورقة الشحن
 "Load Sheet List","قائمة ورقة الشحن"
 "Create load sheet","إنشاء ورقة الشحن"
 "New Load Sheet","ورقة شحن جديدة"
@@ -9992,3 +9996,19 @@ Row #{}: You must select {} serial numbers for item {}.,الصف # {}: يجب ت
 "DISPATCH-MANAGEMENT","إدارة الشحن والتوزيع"
 "REPORTS","التقارير"
 "SETUP","الإعداد"
+"Opening Stock","الرصيد الافتتاحي"
+Put Away List,تخزين قائمة
+" I N B O U N D ",الوارد
+STOCK MOVEMENT,حركة المخزون
+STOCK MOVEMENTS,حركة المخزون 
+Damage Movement,حركة التلف 
+Put Away Damage,وضع التالف في مكانه
+Stock Discard,التخلص من المخزون
+Once the Product is placed in the Damaged Space you may Discard it from your Inventory.,بمجرد وضع المنتج في المساحة التالفة يمكنك التخلص منه من جردك.
+Communication Channels,قنوات الاتصال
+Damage Put Away (Returns),تخزين (الأصناف التالفة)
+Bulk Putaway Tasks,مهام التخزين السائبة
+Create Load Sheet,إنشاء ورقة التحميل
+Create - GRN Putaway,إنشاء - وضع GRN بعيدًا
+Create - Return Putaway,إنشاء - إعادة الوضع
+Create - Pick List,إنشاء - اختيار القائمة
