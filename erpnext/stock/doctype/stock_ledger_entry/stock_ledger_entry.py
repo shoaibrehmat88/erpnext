@@ -57,7 +57,7 @@ class StockLedgerEntry(Document):
 			from erpnext.stock.doctype.serial_no.serial_no import process_serial_no
 
 			process_serial_no(self)
-		# frappe.enqueue(stock_ledger_entry_qty_stock_queue_and_value, sle_name=self.name,warehouse=self.warehouse,item_code=self.item_code,creation=self.creation, queue="sle_u", enqueue_after_commit=True)
+		frappe.enqueue(stock_ledger_entry_qty_stock_queue_and_value, sle_name=self.name,warehouse=self.warehouse,item_code=self.item_code,creation=self.creation, queue="sle_u", enqueue_after_commit=True)
 
 	def calculate_batch_qty(self):
 		if self.batch_no:

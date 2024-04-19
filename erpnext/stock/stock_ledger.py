@@ -623,24 +623,14 @@ class update_entries_after(object):
 		self.wh_data.prev_stock_value = self.wh_data.stock_value
 
 		# update current sle
-		stock_ledger_update = frappe.db.sql(f"""SELECT sum(actual_qty) as qty_after_transaction FROM `tabStock Ledger Entry` WHERE warehouse = '{sle.warehouse}' AND item_code = '{sle.item_code}' AND creation <= '{sle.creation}' and is_cancelled = 0 """,as_dict=True)
-		qty_after_transaction = sle.actual_qty
-		valuation_rate = sle.incoming_rate
-		stock_value = qty_after_transaction * valuation_rate
-		stock_value_difference = sle.actual_qty * valuation_rate
-		if stock_ledger_update[0]['qty_after_transaction']:	
-			qty_after_transaction = stock_ledger_update[0]['qty_after_transaction']
-			stock_value = qty_after_transaction * valuation_rate
-  
-		sle.qty_after_transaction = qty_after_transaction
-		sle.valuation_rate = valuation_rate
-		sle.stock_value = stock_value
+		sle.qty_after_transaction = self.wh_data.qty_after_transaction
+		sle.valuation_rate = self.wh_data.valuation_rate
+		sle.stock_value = self.wh_data.stock_value
 		sle.stock_queue = json.dumps(self.wh_data.stock_queue)
 		sle.stock_value_difference = stock_value_difference
 		sle.doctype = "Stock Ledger Entry"
 
 		frappe.get_doc(sle).db_update()
-		frappe.db.sql(f"""UPDATE `tabBin` SET actual_qty = '{qty_after_transaction}' WHERE item_code = '{sle.item_code}' AND warehouse = '{sle.warehouse}';""")
 
 		if not self.args.get("sle_id"):
 			self.update_outgoing_rate_on_transaction(sle)
