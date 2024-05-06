@@ -491,3 +491,20 @@ def generate_and_download_excel(filters):
 	frappe.local.response.filecontent = filedata
 	frappe.local.response.type = "download"
 	os.remove(temp_file)
+
+@frappe.whitelist()
+def generate_bulk_pdf(docname):
+	doc = frappe.get_doc('Delivery Trip',docname)
+	pdf_data = ''
+	pdf_data = frappe.get_template("postex/templates/loadsheet_trip.html").render({"doc":doc})
+	from frappe.utils.pdf import get_pdf
+	pdf = get_pdf(pdf_data)	
+	filename = f"{docname}.pdf"
+	try:
+		# Send the PDF file as a response
+		frappe.local.response.filename = filename
+		frappe.local.response.filecontent = pdf
+		frappe.local.response.type = 'download'			# Delete the PDF file after it has been sent
+	except Exception as e:
+		frappe.log_error(f"Error: {str(e)}", title="PDF Download Error")
+		frappe.response['error'] = str(e)		

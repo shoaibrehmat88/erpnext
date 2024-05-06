@@ -997,7 +997,8 @@ function updateChildTable(frm){
 
 function bulkPrintOption(frm){
 	if(frm.doc.__islocal == undefined){
-		if(frm.doc.type == 'Pick & Pack' && frm.doc.workflow_state != 'To Pick'){
+		// if(frm.doc.type == 'Pick & Pack' && frm.doc.workflow_state != 'To Pick'){
+		if(frm.doc.type == 'Pick & Pack'){
 			frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
 			frm.add_custom_button(__('Print GDN'), () => frm.events.bulk_print(frm));
 			frm.add_custom_button(__('Print Airway Bill'), () => frm.events.bulk_airway_print(frm));
