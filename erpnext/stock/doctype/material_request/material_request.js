@@ -4,7 +4,7 @@
 // eslint-disable-next-line
 frappe.provide("erpnext.accounts.dimensions");
 {% include 'erpnext/public/js/controllers/buying.js' %};
-
+var role = ''
 frappe.ui.form.on('Material Request', {
 	picking_bin: function(frm){
 		frappe.db.set_value('Picking Bin',frm.doc.picking_bin,'occupied',1);
@@ -108,6 +108,7 @@ frappe.ui.form.on('Material Request', {
 
 	},
 	setup: function(frm) {
+		fetchRoleProfile();
 		frm.custom_make_buttons = {
 			'Stock Entry': 'Issue Material',
 			'Pick List': 'Pick List',
@@ -152,7 +153,7 @@ frappe.ui.form.on('Material Request', {
 			}
 		});		
 		updateChildTable(frm);
-		bulkPrintOption(frm);
+		bulkPrintOption(frm,'setup');
 	},
 
 	onload: function(frm) {
@@ -212,7 +213,7 @@ frappe.ui.form.on('Material Request', {
 
 		frm.set_df_property('naming_series','hidden',1);
 		updateChildTable(frm);
-		bulkPrintOption(frm);
+		bulkPrintOption(frm,'onload');
 
 	},
 
@@ -231,7 +232,7 @@ frappe.ui.form.on('Material Request', {
 		frm.set_df_property('items', 'cannot_add_rows', true);
 		frm.set_df_property('items', 'cannot_delete_rows', true);
 		updateChildTable(frm);
-		bulkPrintOption(frm);
+		bulkPrintOption(frm,'refresh');
 	},
 
 	set_from_warehouse: function(frm) {
@@ -995,7 +996,7 @@ function updateChildTable(frm){
 
 }
 
-function bulkPrintOption(frm){
+function bulkPrintOption(frm,action){
 	if(frm.doc.__islocal == undefined){
 		// if(frm.doc.type == 'Pick & Pack' && frm.doc.workflow_state != 'To Pick'){
 		if(frm.doc.type == 'Pick & Pack'){
@@ -1008,13 +1009,38 @@ function bulkPrintOption(frm){
 			frm.add_custom_button(__('Print GDN Return'), () => frm.events.bulk_print(frm));
 		}
 	}
+	
 	if(frm.doc.type == 'Pick & Pack'){
-		if(frm.doc.__islocal != undefined){
-			frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',1);
-		}else if(frm.doc.workflow_state == 'To Pick' || frm.doc.workflow_state == 'To Pack'){
-			frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
-			frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',0);
+		if (role != undefined && role == 'Warehouse Manager'){
+			if(frm.doc.__islocal != undefined){
+				frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
+				frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',1);
+			}else if(frm.doc.workflow_state == 'To Pick'){
+				frm.get_field('items').grid.update_docfield_property('qty','read_only',0);
+				frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',0);
+			}else if(frm.doc.workflow_state == 'To Pack'){
+				frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
+				frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',0);
+			}	
+		}else{
+			if(frm.doc.__islocal != undefined){
+				frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',1);
+			}else if(frm.doc.workflow_state == 'To Pick' || frm.doc.workflow_state == 'To Pack'){
+				frm.get_field('items').grid.update_docfield_property('qty','read_only',1);
+				frm.get_field('items').grid.update_docfield_property('pack_quantity','read_only',0);
+			}
 		}
 	} 
 	frm.get_field('items').grid.reset_grid();
+}
+
+async function fetchRoleProfile() {
+    try {
+        const response = await frappe.db.get_value('User', frappe.session.user, 'role_profile_name');
+        role = response.message.role_profile_name;
+        // console.log('role 1', role,response);
+        // Call a function or do something else with the role value here
+    } catch (error) {
+        console.error('Error fetching role profile:', error);
+    }
 }
