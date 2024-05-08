@@ -18,6 +18,10 @@ from erpnext.stock.utils import (
 
 
 def execute(filters=None):
+	columns = get_columns(filters)
+	if filters and not filters.get('voucher_no') and not filters.get('warehouse') and not filters.get('item_code'):
+		return [{"label": _("Message"), "fieldname": "item_name","width":400}], [{"item_name":"Warehouse and item_code field required"}]
+
 	is_reposting_item_valuation_in_progress()
 	include_uom = filters.get("include_uom")
 	columns = get_columns(filters)

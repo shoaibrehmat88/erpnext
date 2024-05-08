@@ -36,11 +36,12 @@ frappe.query_reports["General Ledger"] = {
 		{
 			"fieldname":"account",
 			"label": __("Account"),
-			"fieldtype": "MultiSelectList",
+			"fieldtype": "Link",
 			"options": "Account",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Account', txt, {
-					company: frappe.query_report.get_filter_value("company")
+					company: frappe.query_report.get_filter_value("company"),
+					is_group:0
 				});
 			}
 		},
@@ -119,10 +120,10 @@ frappe.query_reports["General Ledger"] = {
 					label: __("Group by Voucher (Consolidated)"),
 					value: "Group by Voucher (Consolidated)",
 				},
-				{
-					label: __("Group by Account"),
-					value: "Group by Account",
-				},
+				// {
+				// 	label: __("Group by Account"),
+				// 	value: "Group by Account",
+				// },
 				{
 					label: __("Group by Party"),
 					value: "Group by Party",

@@ -42,7 +42,7 @@ def execute(filters: Optional[StockBalanceFilter] = None):
 class StockBalanceReport(object):
 	def __init__(self, filters: Optional[StockBalanceFilter]) -> None:
 		self.filters = filters
-		self.from_date = getdate(filters.get("from_date"))
+		self.from_date = getdate(filters.get("to_date"))
 		self.to_date = getdate(filters.get("to_date"))
 
 		self.start_from = None

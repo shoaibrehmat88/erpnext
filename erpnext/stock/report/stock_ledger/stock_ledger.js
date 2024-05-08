@@ -15,7 +15,7 @@ frappe.query_reports["Stock Ledger"] = {
 			"fieldname":"from_date",
 			"label": __("From Date"),
 			"fieldtype": "Date",
-			"default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			"default": frappe.datetime.get_today(),
 			"reqd": 1
 		},
 		{
@@ -33,7 +33,7 @@ frappe.query_reports["Stock Ledger"] = {
 			"get_query": function() {
 				const company = frappe.query_report.get_filter_value('company');
 				return {
-					filters: { 'company': company }
+					filters: { 'company': company, 'is_group':0 }
 				}
 			}
 		},

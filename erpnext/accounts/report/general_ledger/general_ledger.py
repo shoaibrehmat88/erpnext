@@ -26,12 +26,13 @@ def execute(filters=None):
 		return [], []
 
 	account_details = {}
-
+	if filters and not filters.get('voucher_no') and not filters.get('account'):
+		return [{"label": _("Message"), "fieldname": "item_name","width":400}], [{"item_name":"Account field required"}]
 	if filters and filters.get("print_in_account_currency") and not filters.get("account"):
 		frappe.throw(_("Select an account to print in account currency"))
 
-	for acc in frappe.db.sql("""select name, is_group from tabAccount""", as_dict=1):
-		account_details.setdefault(acc.name, acc)
+	# for acc in frappe.db.sql("""select name, is_group from tabAccount""", as_dict=1):
+	# 	account_details.setdefault(acc.name, acc)
 
 	if filters.get("party"):
 		filters.party = frappe.parse_json(filters.get("party"))
@@ -66,17 +67,18 @@ def validate_filters(filters, account_details):
 			_("{0} and {1} are mandatory").format(frappe.bold(_("From Date")), frappe.bold(_("To Date")))
 		)
 
-	if filters.get("account"):
-		filters.account = frappe.parse_json(filters.get("account"))
-		for account in filters.account:
-			if not account_details.get(account):
-				frappe.throw(_("Account {0} does not exists").format(account))
+	# if filters.get("account"):
+	# 	# filters.account = frappe.parse_json(filters.get("account"))
+	# 	filters.account = filters.get("account")
+		# for account in filters.account:
+		# 	if not account_details.get(account):
+		# 		frappe.throw(_("Account {0} does not exists").format(account))
 
-	if filters.get("account") and filters.get("group_by") == "Group by Account":
-		filters.account = frappe.parse_json(filters.get("account"))
-		for account in filters.account:
-			if account_details[account].is_group == 0:
-				frappe.throw(_("Can not filter based on Child Account, if grouped by Account"))
+	# if filters.get("account") and filters.get("group_by") == "Group by Account":
+	# 	filters.account = frappe.parse_json(filters.get("account"))
+	# 	for account in filters.account:
+	# 		if account_details[account].is_group == 0:
+	# 			frappe.throw(_("Can not filter based on Child Account, if grouped by Account"))
 
 	if filters.get("voucher_no") and filters.get("group_by") in ["Group by Voucher"]:
 		frappe.throw(_("Can not filter based on Voucher No, if grouped by Voucher"))
@@ -108,18 +110,18 @@ def set_account_currency(filters):
 		account_currency = None
 
 		if filters.get("account"):
-			if len(filters.get("account")) == 1:
-				account_currency = get_account_currency(filters.account[0])
-			else:
-				currency = get_account_currency(filters.account[0])
-				is_same_account_currency = True
-				for account in filters.get("account"):
-					if get_account_currency(account) != currency:
-						is_same_account_currency = False
-						break
+			# if len(filters.get("account")) == 1:
+			account_currency = get_account_currency(filters.get('account'))
+			# else:
+			# 	currency = get_account_currency(filters.account[0])
+			# 	is_same_account_currency = True
+			# 	for account in filters.get("account"):
+			# 		if get_account_currency(account) != currency:
+			# 			is_same_account_currency = False
+			# 			break
 
-				if is_same_account_currency:
-					account_currency = currency
+			# 	if is_same_account_currency:
+			# 		account_currency = currency
 
 		elif filters.get("party") and filters.get("party_type"):
 			gle_currency = frappe.db.get_value(
@@ -213,8 +215,8 @@ def get_conditions(filters):
 	conditions = []
 
 	if filters.get("account"):
-		filters.account = get_accounts_with_children(filters.account)
-		conditions.append("account in %(account)s")
+		# filters.account = get_accounts_with_children(filters.account)
+		conditions.append("account = %(account)s")
 
 	if filters.get("cost_center"):
 		filters.cost_center = get_cost_centers_with_children(filters.cost_center)

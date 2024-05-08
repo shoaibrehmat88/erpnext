@@ -11,17 +11,18 @@ frappe.query_reports["Stock Balance"] = {
 			"options": "Company",
 			"default": frappe.defaults.get_default("company")
 		},
-		{
-			"fieldname":"from_date",
-			"label": __("From Date"),
-			"fieldtype": "Date",
-			"width": "80",
-			"reqd": 1,
-			"default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
-		},
+		// {
+		// 	"fieldname":"from_date",
+		// 	"label": __("From Date"),
+		// 	"fieldtype": "Date",
+		// 	"width": "80",
+		// 	"reqd": 1,
+		// 	"default": frappe.datetime.get_today(),
+		// 	"read_only":1
+		// },
 		{
 			"fieldname":"to_date",
-			"label": __("To Date"),
+			"label": __("Date"),
 			"fieldtype": "Date",
 			"width": "80",
 			"reqd": 1,
@@ -59,10 +60,12 @@ frappe.query_reports["Stock Balance"] = {
 				return {
 					filters: {
 						...warehouse_type && {warehouse_type},
-						...company && {company}
+						...company && {company},
+						is_group:0
 					}
 				}
-			}
+			},
+			"reqd":1
 		},
 		{
 			"fieldname": "warehouse_type",
