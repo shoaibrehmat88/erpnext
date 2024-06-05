@@ -184,16 +184,22 @@ frappe.ui.form.on('Stock Entry', {
 		frm.trigger("get_items_from_transit_entry");
 		if(!frm.doc.docstatus) {
 			frm.freeze = true;
-			frm.doc.items.forEach(function(item){
-				// frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin',
-                // function(value) {
-				// 	if (value.custom_is_pickable_bin == 0){
-				// 		item.t_warehouse = '';
-				// 		frm.get_field("items").grid.toggle_reqd("t_warehouse", 1);
-				// 		frm.dirty();
-				// 	}	
-				// })
-			});
+			if (frm.doc.stock_entry_type == 'Put Away GRN'){
+				frm.doc.items.forEach(function(item){
+					if (item.s_warehouse == item.t_warehouse){
+						item.t_warehouse = ''
+						frm.dirty();
+					}
+					// frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin',
+					// function(value) {
+					// 	if (value.custom_is_pickable_bin == 0){
+					// 		item.t_warehouse = '';
+					// 		frm.get_field("items").grid.toggle_reqd("t_warehouse", 1);
+					// 		frm.dirty();
+					// 	}	
+					// })
+				});
+			}
 			frm.refresh_field('items')
 			frm.freeze = false;
 			frm.trigger('validate_purpose_consumption');
