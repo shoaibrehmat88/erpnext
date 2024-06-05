@@ -59,6 +59,9 @@ frappe.ui.form.on('Delivery Trip', {
 		refresh_field('scan_barcode');	
 	},
 	onload: function(frm) {
+		if(frm.is_new()){
+			frm.clear_table('delivery_stops');
+		}
         frm.set_df_property('departure_time', 'hidden', 1); // Hide the field
         frm.toggle_reqd('departure_time', false); // Make the field mandatory
 		// frm.fields_dict['departure_time'].df.default = frappe.datetime.get_today();
@@ -124,24 +127,34 @@ frappe.ui.form.on('Delivery Trip', {
 				if (frm.doc.delivery_partner == '' || frm.doc.delivery_partner == undefined){
 					frappe.throw("Please select the delivery company first");
 				}
-				erpnext.utils.map_current_doc({
-					method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
-					source_doctype: "Delivery Note",
-					target: frm,
-					date_field: "posting_date",
-					columns:["posting_date","custom_cn","custom_store_order_ref_id"],
-					setters: {
-						custom_cn: '',
-						custom_store_order_ref_id:'',
-						// sales_partner:'',
-				
-					},
-					get_query_filters: {
-						docstatus: 1,
-						company: frm.doc.company,
-						sales_partner:frm.doc.delivery_partner
-					}
-				})
+				frappe.db.get_list('Delivery Stop',{fields:["delivery_note"]}).then((res) => {
+					var d_stops = [];
+					res.forEach(element => {
+						d_stops.push(element.delivery_note);
+					});
+					frm.doc.delivery_stops.forEach(item => {
+						d_stops.push(item.delivery_note);
+					});
+					erpnext.utils.map_current_doc({
+						method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
+						source_doctype: "Delivery Note",
+						target: frm,
+						date_field: "posting_date",
+						columns:["posting_date","custom_cn","custom_store_order_ref_id"],
+						setters: {
+							custom_cn: '',
+							custom_store_order_ref_id:'',
+							// sales_partner:'',
+					
+						},
+						get_query_filters: {
+							docstatus: 1,
+							company: frm.doc.company,
+							sales_partner:frm.doc.delivery_partner,
+							name: ["not in",d_stops]
+						}
+					})
+				});
 			}, __("Fetch Orders"));
 		}
 		// frm.add_custom_button(__("Delivery Notes"), function () {

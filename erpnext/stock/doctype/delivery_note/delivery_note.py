@@ -727,7 +727,7 @@ def make_delivery_trip(source_name, target_doc=None):
 		target_doc.custom_consignee = source_parent.custom_consignee_name
 		# Append unique Delivery Notes in Delivery Trip
 		delivery_notes.append(target_doc.delivery_note)
-
+	
 	delivery_notes = []
 
 	doclist = get_mapped_doc(
