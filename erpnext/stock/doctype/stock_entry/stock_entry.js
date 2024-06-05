@@ -188,6 +188,7 @@ frappe.ui.form.on('Stock Entry', {
 				frm.doc.items.forEach(function(item){
 					frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin',
 					function(value) {
+						console.log('value ',value)
 						if (value.custom_is_pickable_bin == 0){
 							item.t_warehouse = '';
 							frm.get_field("items").grid.toggle_reqd("t_warehouse", 1);
