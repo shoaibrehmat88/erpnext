@@ -176,31 +176,29 @@ frappe.ui.form.on('Stock Entry', {
 			}
 		});
 	},
-	onload: function(frm){
-		frm.freeze = true;
-		if (frm.doc.stock_entry_type == 'Put Away GRN'){
-			frm.doc.items.forEach(function(item){
-				frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin',
-				function(value) {
-					console.log('value ',value)
-					if (value.custom_is_pickable_bin == 0){
-						item.t_warehouse = '';
-						frm.get_field("items").grid.toggle_reqd("t_warehouse", 1);
-						frm.dirty();
-					}	
-				})
-			});
-		}
-		frm.refresh_field('items')
-		frm.freeze = false;
 
-	},
 	refresh: function(frm) {
 		frm.set_df_property('items', 'cannot_add_rows', true);
 		frm.set_df_property('items', 'multiple_rows', false);
 		frm.set_df_property('items', 'cannot_delete_rows', true);
 		frm.trigger("get_items_from_transit_entry");
 		if(!frm.doc.docstatus) {
+			frm.freeze = true;
+			if (frm.doc.stock_entry_type == 'Put Away GRN'){
+				frm.doc.items.forEach(function(item){
+					frappe.db.get_value('Warehouse',item.t_warehouse,'custom_is_pickable_bin',
+					function(value) {
+						console.log('value ',value)
+						if (value.custom_is_pickable_bin == 0){
+							item.t_warehouse = '';
+							frm.get_field("items").grid.toggle_reqd("t_warehouse", 1);
+							frm.dirty();
+						}	
+					})
+				});
+			}
+			frm.refresh_field('items')
+			frm.freeze = false;
 			frm.trigger('validate_purpose_consumption');
 			// frm.add_custom_button(__('Material Request'), function() {
 			// 	frappe.model.with_doctype('Material Request', function() {
