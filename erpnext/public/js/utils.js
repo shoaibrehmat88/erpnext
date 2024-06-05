@@ -698,6 +698,8 @@ erpnext.utils.map_current_doc = function(opts) {
 							item_qty_map[d.item_code] += flt(d.qty);
 						else
 							item_qty_map[d.item_code] = flt(d.qty);
+						frappe.msgprint(__("You have already selected item from {0} {1}",[opts.source_doctype, src]));						
+						d.remove();
 					}
 				});
 			});
