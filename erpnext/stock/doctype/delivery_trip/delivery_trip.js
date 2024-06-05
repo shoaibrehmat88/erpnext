@@ -127,7 +127,7 @@ frappe.ui.form.on('Delivery Trip', {
 				if (frm.doc.delivery_partner == '' || frm.doc.delivery_partner == undefined){
 					frappe.throw("Please select the delivery company first");
 				}
-				frappe.db.get_list('Delivery Stop',{fields:["delivery_note"]}).then((res) => {
+				frappe.db.get_list('Delivery Stop',{fields:["delivery_note"],ignore_permissions:true}).then((res) => {
 					var d_stops = [];
 					res.forEach(element => {
 						d_stops.push(element.delivery_note);
