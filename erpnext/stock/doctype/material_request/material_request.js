@@ -703,6 +703,7 @@ frappe.ui.form.on("Material Request Item", {
 				{
 					fieldname: 'split_data',
 					cannot_add_rows: true,
+					cannot_delete_rows: true,
 					fieldtype: 'Table',
 					label: __('CN#'),
 					in_editable_grid: true,
