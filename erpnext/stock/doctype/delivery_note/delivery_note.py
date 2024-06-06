@@ -287,6 +287,9 @@ class DeliveryNote(SellingController):
 			rn.save(ignore_permissions=True)
 		elif self.is_return == 1:
 			if self.custom_dn_selected == 1:
+				for i in self.delivery_note_item:
+					if i.total_quantity != (i.accepted_quantity + i.rejected_quantity + i.short_quantity):
+						frappe.throw("Unable to submit order!<br/>Please review the quantities returned to ensure they match the requested quantities.")
 				make_return_stock_entries_bulk(self)
 			else:
 				for i in self.delivery_note_item:
