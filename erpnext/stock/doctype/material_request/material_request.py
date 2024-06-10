@@ -144,18 +144,20 @@ class MaterialRequest(BuyingController):
 		self.title = 'Bulk Actions'
 
 	def on_submit(self):
-		self.update_requested_qty_in_production_plan()
-		self.update_requested_qty()
-		if self.material_request_type == "Purchase":
-			self.validate_budget()
 		#Postex
 		try:
+			self.update_requested_qty_in_production_plan()
+			self.update_requested_qty()
+			if self.material_request_type == "Purchase":
+				self.validate_budget()
 			if self.type == 'Pick & Pack':
 				dns = ', '.join(f'"{i.against}"' for i in self.dn_mr_item)
 				frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
 				frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
 				frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
 				se = make_stock_entry(self.name)
+				for i in se.items:
+					i.t_warehouse = self.set_warehouse
 				se.custom_main_location = self.custom_location
 				se.save(ignore_permissions=True)
 				se.submit()
@@ -180,8 +182,8 @@ class MaterialRequest(BuyingController):
 					dn = frappe.get_doc('Delivery Note',d.against)
 					dn.submit()
 		except Exception as e:
-			frappe.throw(f"{str(e)}")
 			frappe.db.rollback()
+			frappe.throw(f"{str(e)}")
 	def before_save(self):
 		if self.workflow_state == None or self.workflow_state == 'To Pick':
 			if self.type == 'Pick & Pack' and self.workflow_state != 'To Pack':
