@@ -14,30 +14,7 @@ frappe.ui.form.on('Material Request', {
 		frm.clear_table('items');
 		frm.clear_table('dn_mr_items');
 		frm.clear_table('mr_se_item');
-		if (frm.doc.type == 'Pick & Pack'){
-			if (frm.is_new()){
-				frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
-				__("Fetch Products"));
-				frm.remove_custom_button(__('GRN'),__("Fetch Products"));
-				frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
-			}
-		}else if(frm.doc.type == 'Put Away GRN'){
-			if(frm.is_new()){
-				// Button
-				frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
-				__("Fetch Products"));
-				frm.remove_custom_button(__('GDN'),__("Fetch Products"));
-				frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
-			}
-		}else if(frm.doc.type == 'Put Away Return'){
-			if(frm.is_new()){
-				// Button
-				frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
-				__("Fetch Products"));
-				frm.remove_custom_button(__('GRN'),__("Fetch Products"));
-				frm.remove_custom_button(__('GDN'),__("Fetch Products"));
-			}
-		}	
+		changeButtons(frm)
 	},
 	custom_scan_barcode:function(frm){
 		if (frm.doc.custom_barcode != ''){
@@ -163,7 +140,7 @@ frappe.ui.form.on('Material Request', {
 	},
 
 	onload: function(frm) {
-		// add item, if previous view was item
+		// add item, if previous view was item		
 		erpnext.utils.add_item(frm);
 
 		// set schedule_date
@@ -1039,6 +1016,7 @@ function bulkPrintOption(frm,action){
 		// }
 	} 
 	frm.get_field('items').grid.reset_grid();
+	changeButtons(frm)
 }
 
 // async function fetchRoleProfile() {
@@ -1051,3 +1029,30 @@ function bulkPrintOption(frm,action){
 //         console.error('Error fetching role profile:', error);
 //     }
 // }
+
+function changeButtons(frm){
+	if (frm.doc.type == 'Pick & Pack'){
+		if (frm.is_new()){
+			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+		}
+	}else if(frm.doc.type == 'Put Away GRN'){
+		if(frm.is_new()){
+			// Button
+			frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+		}
+	}else if(frm.doc.type == 'Put Away Return'){
+		if(frm.is_new()){
+			// Button
+			frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
+			__("Fetch Products"));
+			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+		}
+	}	
+}
