@@ -139,6 +139,11 @@ class PurchaseReceipt(BuyingController):
 		self.reset_default_field_value("set_warehouse", "items", "warehouse")
 		self.reset_default_field_value("rejected_warehouse", "items", "rejected_warehouse")
 		self.reset_default_field_value("set_from_warehouse", "items", "from_warehouse")
+	
+		#postex validate qty
+		for i in self.items:
+			if (i.custom_order_quantity != (i.qty + i.rejected_qty)):
+				frappe.throw(f'Product {i.item_code} accepeted and rejected quantities sum does not matched with order quantity.')
 
 	def validate_cwip_accounts(self):
 		for item in self.get("items"):
@@ -274,6 +279,22 @@ class PurchaseReceipt(BuyingController):
 			#postex
 			se = make_stock_entry(self.name)
 			se.save()
+			#postex if damaged 
+			doclist = frappe.new_doc('Stock Entry')
+			doclist.stock_entry_type = 'Put Away Damage'
+			doclist.company = self.company
+			doclist.custom_main_location = self.custom_main_location
+			for i in self.items:
+				if i.rejected_qty > 0:
+					doclist.append("items",{
+						"item_code" : i.item_code,
+						"s_warehouse" : self.rejected_warehouse,
+						"t_warehouse" : '',
+						"qty" : i.rejected_qty
+					})
+			if len(doclist.items) > 0:
+				doclist.save()
+
 		except Exception as e:
 			frappe.throw(f"{str(e)}")
 			frappe.db.rollback()
