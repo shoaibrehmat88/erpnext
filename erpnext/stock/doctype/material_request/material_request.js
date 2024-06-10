@@ -15,22 +15,28 @@ frappe.ui.form.on('Material Request', {
 		frm.clear_table('dn_mr_items');
 		frm.clear_table('mr_se_item');
 		if (frm.doc.type == 'Pick & Pack'){
-			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
-			__("Fetch Products"));
-			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
-			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+			if (frm.is_new()){
+				frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
+				__("Fetch Products"));
+				frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+				frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+			}
 		}else if(frm.doc.type == 'Put Away GRN'){
-			// Button
-			frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
-			__("Fetch Products"));
-			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
-			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+			if(frm.is_new()){
+				// Button
+				frm.add_custom_button(__('GRN'), () => frm.events.get_items_from_grn(frm),
+				__("Fetch Products"));
+				frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+				frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
+			}
 		}else if(frm.doc.type == 'Put Away Return'){
-			// Button
-			frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
-			__("Fetch Products"));
-			frm.remove_custom_button(__('GRN'),__("Fetch Products"));
-			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+			if(frm.is_new()){
+				// Button
+				frm.add_custom_button(__('GDN Return'), () => frm.events.get_items_from_gdn_return(frm),
+				__("Fetch Products"));
+				frm.remove_custom_button(__('GRN'),__("Fetch Products"));
+				frm.remove_custom_button(__('GDN'),__("Fetch Products"));
+			}
 		}	
 	},
 	custom_scan_barcode:function(frm){
@@ -308,7 +314,7 @@ frappe.ui.form.on('Material Request', {
 			// }
 		// }
 
-		if (frm.doc.docstatus===0) {
+		if (frm.doc.docstatus==0 && frm.is_new()) {			
 			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
 				__("Fetch Products"));
 		}
