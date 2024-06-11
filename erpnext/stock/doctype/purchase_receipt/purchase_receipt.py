@@ -142,8 +142,12 @@ class PurchaseReceipt(BuyingController):
 	
 		#postex validate qty
 		for i in self.items:
-			if (i.custom_order_quantity != (i.qty + i.rejected_qty)):
-				frappe.throw(f'Product {i.item_code} accepeted and rejected quantities sum does not matched with order quantity.')
+			if self.is_return == 1:
+				if ((-1 *i.custom_order_quantity) != (i.qty + i.rejected_qty)):
+					frappe.throw(f'Product {i.item_code} accepeted and rejected quantities sum does not matched with order quantity.')
+			else:
+				if (i.custom_order_quantity != (i.qty + i.rejected_qty)):
+					frappe.throw(f'Product {i.item_code} accepeted and rejected quantities sum does not matched with order quantity.')
 
 	def validate_cwip_accounts(self):
 		for item in self.get("items"):
