@@ -405,7 +405,7 @@ frappe.ui.form.on('Material Request', {
 				// workflow_state:'To Pick',	
 				company: frm.doc.company,
 				custom_main_location : frm.doc.custom_location,
-				stock_enty_type: 'Put Away GRN'
+				stock_entry_type: 'Put Away GRN'
 			},
 			primary_action_label : 'Select Orders'
 		});
