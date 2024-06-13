@@ -373,7 +373,7 @@ frappe.ui.form.on('Material Request', {
 				company: frm.doc.company,
 				custom_location : frm.doc.custom_location
 			},
-			primary_action_label : 'Select Orders'
+			primary_action_label : 'Select Orders',
 		});
 	},
 	get_items_from_grn: function(frm) {
@@ -404,7 +404,8 @@ frappe.ui.form.on('Material Request', {
 				custom_se_selected:0,
 				// workflow_state:'To Pick',	
 				company: frm.doc.company,
-				custom_main_location : frm.doc.custom_location
+				custom_main_location : frm.doc.custom_location,
+				stock_enty_type: 'Put Away GRN'
 			},
 			primary_action_label : 'Select Orders'
 		});

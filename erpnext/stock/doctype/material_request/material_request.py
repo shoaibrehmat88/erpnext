@@ -125,6 +125,14 @@ class MaterialRequest(BuyingController):
 		elif self.type == 'Put Away Return':
 			for i in self.items:
 				print(i)
+		if self.type == 'Pick & Pack' or self.type == 'Put Away Return':
+			for i in self.dn_mr_item:				
+				frappe.db.set_value('Delivery Note',i.against,'custom_dn_selected',1)
+				frappe.db.commit()
+		elif self.type == 'Put Away GRN':
+			for i in self.mr_se_item:				
+				frappe.db.set_value('Stock Entry',i.against,'custom_dn_selected',1)
+				frappe.db.commit()
 
 
 	def before_update_after_submit(self):
@@ -193,6 +201,15 @@ class MaterialRequest(BuyingController):
 			elif self.type == 'Put Away Return' and self.workflow_state != 'Quality Check' :
 				self.workflow_state = 'Received'
 				# self.naming_series = 'MAT-DN-RET-.YYYY.-'
+		if self.type == 'Pick & Pack' or self.type == 'Put Away Return':
+			for i in self.dn_mr_item:				
+				frappe.db.set_value('Delivery Note',i.against,'custom_dn_selected',1)
+				frappe.db.commit()
+		elif self.type == 'Put Away GRN':
+			for i in self.mr_se_item:				
+				frappe.db.set_value('Stock Entry',i.against,'custom_dn_selected',1)
+				frappe.db.commit()
+
 		# self.set_status(update=True)
 
 	# def before_submit(self):

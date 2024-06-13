@@ -572,8 +572,6 @@ def make_material_request(source_name, target_doc=None):
 	if isinstance(target_doc,str):
 		target_doc = frappe.get_doc(json.loads(target_doc))
 	dn = frappe.get_doc('Delivery Note', source_name)
-	frappe.db.set_value('Delivery Note',source_name,'custom_dn_selected',1)
-	frappe.db.commit()
 	i_c = []
 	d_c = []
 	for md in target_doc.dn_mr_item:
@@ -618,8 +616,6 @@ def make_grn_material_request(source_name, target_doc=None):
 	if isinstance(target_doc,str):
 		target_doc = frappe.get_doc(json.loads(target_doc))
 	se = frappe.get_doc('Stock Entry', source_name)
-	frappe.db.set_value('Stock Entry',source_name,'custom_se_selected',1)
-	frappe.db.commit()
 	i_c = []
 	d_c = []
 	for md in target_doc.mr_se_item:
@@ -665,8 +661,6 @@ def make_gdn_return_material_request(source_name, target_doc=None):
 	if isinstance(target_doc,str):
 		target_doc = frappe.get_doc(json.loads(target_doc))
 	dn = frappe.get_doc('Delivery Note', source_name)
-	frappe.db.set_value('Delivery Note',source_name,'custom_dn_selected',1)
-	frappe.db.commit()
 	i_c = []
 	d_c = []
 	for md in target_doc.dn_mr_item:
