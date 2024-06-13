@@ -207,7 +207,7 @@ class MaterialRequest(BuyingController):
 				frappe.db.commit()
 		elif self.type == 'Put Away GRN':
 			for i in self.mr_se_item:				
-				frappe.db.set_value('Stock Entry',i.against,'custom_dn_selected',1)
+				frappe.db.set_value('Stock Entry',i.against,'custom_se_selected',1)
 				frappe.db.commit()
 
 		# self.set_status(update=True)
