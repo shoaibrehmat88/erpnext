@@ -131,11 +131,11 @@ class StockLedgerEntry(Document):
 			makerequest = True
 			custom_oms_location = warehouse.get('custom_oms_location')
 
-		if makerequest == False and self.voucher_type == 'Delivery Note':
-			is_return = frappe.get_value('Delivery Note',self.voucher_no,'is_return')
-			if is_return == 1:
-				makerequest = True
-				custom_oms_location = frappe.get_value('Delivery Note',self.voucher_no,'custom_location')
+		# if makerequest == False and self.voucher_type == 'Delivery Note':
+		# 	is_return = frappe.get_value('Delivery Note',self.voucher_no,'is_return')
+		# 	if is_return == 1:
+		# 		makerequest = True
+		# 		custom_oms_location = frappe.get_value('Delivery Note',self.voucher_no,'custom_location')
 		
 		if makerequest == True:
 			_mr = True
