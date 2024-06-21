@@ -129,6 +129,13 @@ class StockLedgerEntry(Document):
 		warehouse = frappe.get_doc('Warehouse',self.warehouse)
 		if warehouse.get('custom_is_sync') == 1 and warehouse.get('custom_oms_location'):
 			makerequest = True
+			custom_oms_location = warehouse.get('custom_oms_location')
+
+		if makerequest == False and self.voucher_type == 'Delivery Note':
+			is_return = frappe.get_value('Delivery Note',self.voucher_no,'is_return')
+			if is_return == 1:
+				makerequest = True
+				custom_oms_location = frappe.get_value('Delivery Note',self.voucher_no,'custom_location')
 		
 		if makerequest == True:
 			_mr = True
@@ -150,7 +157,7 @@ class StockLedgerEntry(Document):
 				import json
 				url = "/services/oms/api/wms/product/quanity/update"
 				payload = json.dumps({
-					"locationReference": warehouse.get('custom_oms_location'),
+					"locationReference": custom_oms_location,
 					"productReference": self.item_code,
 					"quantity": qty
 				})
