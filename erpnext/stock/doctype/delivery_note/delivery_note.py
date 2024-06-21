@@ -1144,10 +1144,22 @@ def make_return_stock_entries_bulk(dn):
 				"s_warehouse" : i.warehouse,
 				"t_warehouse" : i.a_warehouse,
 				"qty" : i.accepted_quantity
-			})
+			})			
 	if len(doclist.items) > 0:
 		doclist.save()
 		doclist.submit()
+		for i in dn.delivery_note_item:
+			if i.accepted_quantity > 0:
+				from postex.utils import send_request
+				import json
+				url = "/services/oms/api/wms/product/quanity/update"
+				payload = json.dumps({
+					"locationReference": dn.custom_location,
+					"productReference": i.sku,
+					"quantity": i.accepted_quantity
+				})
+				send_request(url,payload)
+
 		# rse = frappe.new_doc('Stock Entry')
 		# rse.stock_entry_type = 'Put Away Return'
 		# rse.company = dn.company
