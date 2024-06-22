@@ -674,21 +674,22 @@ def make_gdn_return_material_request(source_name, target_doc=None):
 			for mi in target_doc.items:
 				if mi.item_code == i.sku:
 					mi.required_quantity += i.total_quantity
+					mi.qty += i.total_quantity
 					split_data = json.loads(mi.split_data)
-					split_data.append({"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":0,"r_qty":0,"s_qty":0,"parent":dn.name})
+					split_data.append({"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":i.total_quantity,"r_qty":0,"s_qty":0,"parent":dn.name})
 					mi.split_data = json.dumps(split_data)
 		else:
 			target_d = frappe.new_doc("Material Request Item", target_doc, "items")
 			target_d.item_code = i.sku
 			target_d.item_name = i.product_name
 			target_d.required_quantity = i.total_quantity
-			target_d.qty = 0
+			target_d.qty = i.total_quantity
 			target_d.description = i.product_name
 			target_d.uom = 'Nos'
 			target_d.conversion_factor = 1
 			target_d.schedule_date = target_doc.transaction_date
 			target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.sku},'default_warehouse')
-			split_data = [{"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":0,"r_qty":0,"s_qty":0,"parent":dn.name}]
+			split_data = [{"cn":dn.custom_cn,"qty":i.total_quantity,"a_qty":i.total_quantity,"r_qty":0,"s_qty":0,"parent":dn.name}]
 			target_d.split_data = json.dumps(split_data)
 			target_doc.append("items", target_d)
 		nc = frappe.new_doc("MR DN Item", target_doc, "dn_mr_item")
