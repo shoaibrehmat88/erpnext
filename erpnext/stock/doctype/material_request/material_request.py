@@ -163,12 +163,12 @@ class MaterialRequest(BuyingController):
 				frappe.db.sql(f"""UPDATE `tabDelivery Note` set custom_picking_bin = '{self.picking_bin}', workflow_state = 'To Pack' WHERE name in ({dns})""")
 				frappe.db.sql(f"""UPDATE `tabDelivery Note Item` set warehouse = '{self.set_warehouse}' WHERE parent in ({dns})""")
 				frappe.db.sql(f"""UPDATE `tabPicking Bin` set occupied = 0 WHERE name = '{self.picking_bin}'""")
-				se = make_stock_entry(self.name)
-				for i in se.items:
-					i.t_warehouse = self.set_warehouse
-				se.custom_main_location = self.custom_location
-				se.save(ignore_permissions=True)
-				se.submit()
+				# se = make_stock_entry(self.name)
+				# for i in se.items:
+				# 	i.t_warehouse = self.set_warehouse
+				# se.custom_main_location = self.custom_location
+				# se.save(ignore_permissions=True)
+				# se.submit()
 				for i in self.dn_mr_item:
 					dn = frappe.get_doc('Delivery Note',i.against)
 					dn.submit()
