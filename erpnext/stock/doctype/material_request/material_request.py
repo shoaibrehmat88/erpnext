@@ -171,8 +171,7 @@ class MaterialRequest(BuyingController):
 				se.submit()
 				for i in self.dn_mr_item:
 					dn = frappe.get_doc('Delivery Note',i.against)
-					if dn.docstatus == 0:
-						dn.submit()
+					dn.submit()
 			elif self.type == 'Put Away GRN':
 				se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
 				for i in self.items:
