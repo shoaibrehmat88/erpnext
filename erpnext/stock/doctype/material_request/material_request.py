@@ -171,7 +171,8 @@ class MaterialRequest(BuyingController):
 				se.submit()
 				for i in self.dn_mr_item:
 					dn = frappe.get_doc('Delivery Note',i.against)
-					dn.submit()
+					if dn.docstatus == 0:
+						dn.submit()
 			elif self.type == 'Put Away GRN':
 				se = ', '.join(f'"{i.against}"' for i in self.mr_se_item)
 				for i in self.items:
@@ -308,33 +309,33 @@ class MaterialRequest(BuyingController):
 		mr_items_ordered_qty = self.get_mr_items_ordered_qty(mr_items)
 		mr_qty_allowance = frappe.db.get_single_value("Stock Settings", "mr_qty_allowance")
 
-		for d in self.get("items"):
-			precision = d.precision("ordered_qty")
-			if d.name in mr_items:
-				if self.material_request_type in ("Material Issue", "Material Transfer", "Customer Provided"):
-					d.ordered_qty = flt(mr_items_ordered_qty.get(d.name))
+		# for d in self.get("items"):
+		# 	precision = d.precision("ordered_qty")
+		# 	if d.name in mr_items:
+		# 		if self.material_request_type in ("Material Issue", "Material Transfer", "Customer Provided"):
+		# 			d.ordered_qty = flt(mr_items_ordered_qty.get(d.name))
 
-					if mr_qty_allowance:
-						allowed_qty = flt((d.qty + (d.qty * (mr_qty_allowance / 100))), precision)
+		# 			if mr_qty_allowance:
+		# 				allowed_qty = flt((d.qty + (d.qty * (mr_qty_allowance / 100))), precision)
 
-						if d.ordered_qty and d.ordered_qty > allowed_qty:
-							frappe.throw(
-								_(
-									"The total Issue / Transfer quantity {0} in Material Request {1}  cannot be greater than allowed requested quantity {2} for Item {3}"
-								).format(d.ordered_qty, d.parent, allowed_qty, d.item_code)
-							)
+		# 				if d.ordered_qty and d.ordered_qty > allowed_qty:
+		# 					frappe.throw(
+		# 						_(
+		# 							"The total Issue / Transfer quantity {0} in Material Request {1}  cannot be greater than allowed requested quantity {2} for Item {3}"
+		# 						).format(d.ordered_qty, d.parent, allowed_qty, d.item_code)
+		# 					)
 
-					elif d.ordered_qty and flt(d.ordered_qty, precision) > flt(d.stock_qty, precision):
-						frappe.throw(
-							_(
-								"The total Issue / Transfer quantity {0} in Material Request {1} cannot be greater than requested quantity {2} for Item {3}"
-							).format(d.ordered_qty, d.parent, d.stock_qty, d.item_code)
-						)
+		# 			elif d.ordered_qty and flt(d.ordered_qty, precision) > flt(d.stock_qty, precision):
+		# 				frappe.throw(
+		# 					_(
+		# 						"The total Issue / Transfer quantity {0} in Material Request {1} cannot be greater than requested quantity {2} for Item {3}"
+		# 					).format(d.ordered_qty, d.parent, d.stock_qty, d.item_code)
+		# 				)
 
-				elif self.material_request_type == "Manufacture":
-					d.ordered_qty = flt(mr_items_ordered_qty.get(d.name))
+		# 		elif self.material_request_type == "Manufacture":
+		# 			d.ordered_qty = flt(mr_items_ordered_qty.get(d.name))
 
-				frappe.db.set_value(d.doctype, d.name, "ordered_qty", d.ordered_qty)
+		# 		frappe.db.set_value(d.doctype, d.name, "ordered_qty", d.ordered_qty)
 
 		self._update_percent_field(
 			{
@@ -414,6 +415,7 @@ def set_missing_values(source, target_doc):
 		nowdate()
 	):
 		target_doc.schedule_date = None
+	target_doc.run_method("set_missing_values")
 	target_doc.run_method("set_missing_values")
 	target_doc.run_method("calculate_taxes_and_totals")
 
@@ -757,7 +759,15 @@ def make_stock_entry(source_name, target_doc=None):
 		target_doc,
 		set_missing_values,
 	)
-
+	# check for the previous SE
+	entries = frappe.get_list('Stock Entry',{'custom_against_mr':source_name})
+	for e in entries:
+		std = frappe.get_list('Stock Ledger Entry',{'voucher_no':e.name})
+		for i in std:
+			d = frappe.get_doc('Stock Ledger Entry',i.name)
+			for di in doclist.items:
+				if d.item_code == di.item_code:
+					di.actual_qty -= d.actual_qty
 	return doclist
 
 
