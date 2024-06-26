@@ -127,39 +127,29 @@ frappe.ui.form.on('Delivery Trip', {
 				if (frm.doc.delivery_partner == '' || frm.doc.delivery_partner == undefined){
 					frappe.throw("Please select the delivery company first");
 				}
-				frappe.call({
-					method: "postex.utils.get_delivery_stops",
-					callback: function(r) {
-						if (r.message) {
-							var d_stops = [];
-							d_stops = r.message.map(function(d) {
-								return d.delivery_note;
-							});
-							frm.doc.delivery_stops.forEach(item => {
-								d_stops.push(item.delivery_note);
-							});
-						}
-						erpnext.utils.map_current_doc({
-							method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
-							source_doctype: "Delivery Note",
-							target: frm,
-							date_field: "posting_date",
-							columns:["posting_date","custom_cn","custom_store_order_ref_id"],
-							setters: {
-								custom_cn: '',
-								custom_store_order_ref_id:'',
-								// sales_partner:'',
-						
-							},
-							get_query_filters: {
-								docstatus: 1,
-								company: frm.doc.company,
-								sales_partner:frm.doc.delivery_partner,
-								name: ["not in",d_stops]
-							}
-						})
-					}
+				let d_stops = [];
+				frm.doc.delivery_stops.forEach(item => {
+					d_stops.push(item.delivery_note);
 				});
+				erpnext.utils.map_current_doc({
+					method: "erpnext.stock.doctype.delivery_note.delivery_note.make_delivery_trip",
+					source_doctype: "Delivery Note",
+					target: frm,
+					date_field: "posting_date",
+					columns:["posting_date","custom_cn","custom_store_order_ref_id"],
+					setters: {
+						custom_cn: '',
+						custom_store_order_ref_id:'',
+						// sales_partner:'',
+				
+					},
+					get_query_filters: {
+						docstatus: 1,
+						company: frm.doc.company,
+						sales_partner:frm.doc.delivery_partner,
+						name: ["not in",d_stops]
+					}
+				})
 	
 			}, __("Fetch Orders"));
 		}
