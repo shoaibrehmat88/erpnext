@@ -640,9 +640,12 @@ def make_grn_material_request(source_name, target_doc=None):
 			target_d.schedule_date = target_doc.transaction_date
 			# target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
 			wh = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
-			w = frappe.get_doc('Warehouse',wh)
-			if w.custom_is_pickable_bin  == 1:
-				target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
+			if wh:
+				w = frappe.get_doc('Warehouse',wh)
+				if w.custom_is_pickable_bin  == 1:
+					target_d.from_warehouse = frappe.db.get_value('Item Default',{"parent":i.item_code},'default_warehouse')
+				else:
+					target_d.from_warehouse = ''
 			else:
 				target_d.from_warehouse = ''
 
