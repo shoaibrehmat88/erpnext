@@ -1050,8 +1050,6 @@ function bulkPrintOption(frm,action){
 // }
 
 function changeButtons(frm){
-	frm.toggle_display('custom_default_target_bin',0);
-	frm.toggle_display('custom_apply_default_target_bin',0);
 	if (frm.doc.type == 'Pick & Pack'){
 		if (frm.is_new()){
 			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
@@ -1067,8 +1065,6 @@ function changeButtons(frm){
 			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
 			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
 		}
-		frm.toggle_display('custom_default_target_bin',1);
-		frm.toggle_display('custom_apply_default_target_bin',1);
 	}else if(frm.doc.type == 'Put Away Return'){
 		if(frm.is_new()){
 			// Button
