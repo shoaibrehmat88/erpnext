@@ -151,6 +151,16 @@ frappe.ui.form.on('Material Request', {
 				filters: {'company': doc.company}
 			};
 		});
+		frm.set_query("custom_default_target_bin", function(doc){
+			return {
+				filters: {
+					company: doc.company,
+					parent_warehouse:['descendants of',doc.custom_location],
+					custom_is_pickable_bin:1
+
+				}
+			};
+		});
 
 		frm.set_query("set_warehouse", function(doc){
 			return {
@@ -199,7 +209,15 @@ frappe.ui.form.on('Material Request', {
 		bulkPrintOption(frm,'onload');
 
 	},
-
+	custom_apply_default_target_bin: function(frm){
+		frm.freeze = 1;
+		frm.doc.items.forEach(d => {
+			frappe.model.set_value(d.doctype, d.name,
+				"from_warehouse", frm.doc.custom_default_target_bin);
+		});
+		refresh_field('items');
+		frm.freeze = 0;
+	},
 	company: function(frm) {
 		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 	},
@@ -1032,6 +1050,8 @@ function bulkPrintOption(frm,action){
 // }
 
 function changeButtons(frm){
+	frm.toggle_display('custom_default_target_bin',0);
+	frm.toggle_display('custom_apply_default_target_bin',0);
 	if (frm.doc.type == 'Pick & Pack'){
 		if (frm.is_new()){
 			frm.add_custom_button(__('GDN'), () => frm.events.get_items_from_sales_order(frm),
@@ -1047,6 +1067,8 @@ function changeButtons(frm){
 			frm.remove_custom_button(__('GDN'),__("Fetch Products"));
 			frm.remove_custom_button(__('GDN Return'),__("Fetch Products"));
 		}
+		frm.toggle_display('custom_default_target_bin',1);
+		frm.toggle_display('custom_apply_default_target_bin',1);
 	}else if(frm.doc.type == 'Put Away Return'){
 		if(frm.is_new()){
 			// Button
