@@ -240,7 +240,3 @@ def stock_ledger_entry_qty_stock_queue_and_value(sle_name,warehouse,item_code,cr
 	if stock_ledger_update[0]['qty_after_transaction']:	
 		frappe.db.sql(f"""UPDATE `tabStock Ledger Entry` SET qty_after_transaction = '{stock_ledger_update[0]['qty_after_transaction']}', stock_value = '{stock_ledger_update[0]['qty_after_transaction'] * stock_ledger_update[0]['valuation_rate']}',stock_value_difference = (actual_qty * valuation_rate) WHERE NAME = '{sle_name}';""",auto_commit=True)
 		frappe.db.sql(f"""UPDATE `tabBin` SET actual_qty = '{stock_ledger_update[0]['qty_after_transaction']}' WHERE item_code = '{item_code}' AND warehouse = '{warehouse}';""",auto_commit=True)
-
-
-
-		837092
